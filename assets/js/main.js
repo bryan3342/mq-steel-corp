@@ -1,18 +1,7 @@
-/* ===========================================================
-   main.js — MQ Steel Corp
-   All interactive behavior for the single-page site.
-   Uses ES module imports (type="module" in index.html).
-   =========================================================== */
-
 import { db } from './firebase-config.js';
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-/* ---------------------------------------------------------
-   1. MOBILE MENU TOGGLE
-   Hamburger button opens/closes the slide-in mobile menu.
-   Updates aria-expanded for screen readers and locks body
-   scroll while the menu is open.
-   --------------------------------------------------------- */
+/* Mobile Menu */
 const hamburger  = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobileMenu');
 
@@ -24,7 +13,6 @@ if (hamburger && mobileMenu) {
     document.body.style.overflow = isOpen ? 'hidden' : '';
   });
 
-  // Close menu when any nav link inside it is clicked
   mobileMenu.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => {
       mobileMenu.classList.remove('navbar__mobile-menu--open');
@@ -35,13 +23,7 @@ if (hamburger && mobileMenu) {
   });
 }
 
-
-/* ---------------------------------------------------------
-   2. SCROLL-BASED NAVBAR STYLING
-   Adds a shadow and semi-transparent background to the
-   navbar after the user scrolls past 100px. Uses passive
-   listener for scroll performance.
-   --------------------------------------------------------- */
+/* Navbar Scroll Effect */
 const navbar = document.getElementById('navbar');
 const SCROLL_THRESHOLD = 100;
 
@@ -55,16 +37,10 @@ function handleNavbarScroll() {
 
 if (navbar) {
   window.addEventListener('scroll', handleNavbarScroll, { passive: true });
-  handleNavbarScroll(); // run once on load in case page loads scrolled
+  handleNavbarScroll();
 }
 
-
-/* ---------------------------------------------------------
-   3. SPLIDE HERO BACKGROUND CAROUSEL
-   Full-screen crossfade carousel behind the hero text.
-   1 slide at a time, no controls, auto-rotates every 5s.
-   Splide is loaded as a regular script, available as a global.
-   --------------------------------------------------------- */
+/* Hero Carousel */
 const carouselEl = document.getElementById('projectCarousel');
 
 if (carouselEl && typeof Splide !== 'undefined') {
@@ -84,13 +60,7 @@ if (carouselEl && typeof Splide !== 'undefined') {
   }).mount();
 }
 
-
-/* ---------------------------------------------------------
-   4. SMOOTH SCROLL WITH NAVBAR OFFSET
-   CSS scroll-padding-top handles basic anchor scrolling,
-   but this JS provides a reliable offset calculation for
-   all browsers when clicking any anchor link.
-   --------------------------------------------------------- */
+/* Smooth Scroll */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', (e) => {
     const targetId = anchor.getAttribute('href');
@@ -111,14 +81,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
-
-/* ---------------------------------------------------------
-   5. CONTACT FORM — FIRESTORE SUBMISSION
-   Submits work order data to the Firebase Firestore
-   "submissions" collection. Adds a server timestamp and
-   "new" status for tracking. Shows loading/success/error
-   states on the submit button.
-   --------------------------------------------------------- */
+/* Contact Form Submission */
 const contactForm = document.getElementById('contactForm');
 
 if (contactForm) {
@@ -128,13 +91,11 @@ if (contactForm) {
     const submitBtn = contactForm.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
 
-    // Loading state
     submitBtn.textContent = 'Sending...';
     submitBtn.disabled = true;
     submitBtn.style.opacity = '0.7';
 
     try {
-      // Build document from form fields
       const formData = new FormData(contactForm);
       const submission = {
         name:        formData.get('name'),
@@ -145,10 +106,8 @@ if (contactForm) {
         status:      'new',
       };
 
-      // Write to Firestore "submissions" collection
       await addDoc(collection(db, 'submissions'), submission);
 
-      // Success feedback
       submitBtn.textContent = 'Message Sent!';
       contactForm.reset();
 
@@ -160,8 +119,6 @@ if (contactForm) {
 
     } catch (error) {
       console.error('Form submission error:', error);
-
-      // Error feedback
       submitBtn.textContent = 'Something went wrong. Try again.';
 
       setTimeout(() => {

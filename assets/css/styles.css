@@ -1,76 +1,53 @@
-/* ===========================================================
-   STEP 2: CUSTOM PROPERTIES & DESIGN TOKENS
-   Single source of truth for colors, fonts, spacing, etc.
-   Every component references these variables instead of
-   hard-coded values, making future theme changes trivial.
-   =========================================================== */
 :root {
-  /* --- Colors (from Phase 1 palette) --- */
   --color-primary:      #1A1A2E;
   --color-accent:       #C8963E;
   --color-dark:         #111119;
   --color-light:        #F5F4F2;
   --color-white:        #FFFFFF;
   --color-muted:        #6B7280;
-
-  /* Accent variants for interactive states */
   --color-accent-dark:  #A87A2F;
-  --color-accent-light: #D4A94E;
 
-  /* --- Typography --- */
   --font-display: 'Oswald', sans-serif;
   --font-heading: 'Montserrat', sans-serif;
   --font-body:    'Inter', sans-serif;
 
-  --fs-base:  1rem;        /* 16px */
-  --fs-sm:    0.875rem;    /* 14px */
-  --fs-lg:    1.125rem;    /* 18px */
-  --fs-xl:    1.5rem;      /* 24px */
-  --fs-2xl:   2rem;        /* 32px */
-  --fs-3xl:   2.5rem;      /* 40px */
-  --fs-hero:  3rem;        /* 48px — scales up at breakpoints */
+  --fs-base:  1rem;
+  --fs-sm:    0.875rem;
+  --fs-lg:    1.125rem;
+  --fs-xl:    1.5rem;
+  --fs-2xl:   2rem;
+  --fs-3xl:   2.5rem;
 
   --fw-regular:  400;
   --fw-medium:   500;
   --fw-semibold: 600;
   --fw-bold:     700;
 
-  /* --- Spacing scale (8px base) --- */
-  --space-xs:  0.25rem;    /* 4px  */
-  --space-sm:  0.5rem;     /* 8px  */
-  --space-md:  1rem;       /* 16px */
-  --space-lg:  1.5rem;     /* 24px */
-  --space-xl:  2rem;       /* 32px */
-  --space-2xl: 3rem;       /* 48px */
-  --space-3xl: 4rem;       /* 64px */
-  --space-4xl: 6rem;       /* 96px */
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
 
-  /* --- Layout --- */
   --container-max:     1200px;
-  --container-padding: var(--space-md);   /* 16px gutters, grows at breakpoints */
-  --navbar-height:     70px;              /* used for scroll offset calculations */
+  --container-padding: var(--space-md);
+  --navbar-height:     70px;
 
-  /* --- Borders & Radii --- */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
 
-  /* --- Shadows --- */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
 
-  /* --- Transitions --- */
   --transition-fast: 200ms ease;
   --transition-base: 300ms ease;
-  --transition-slow: 500ms ease;
 }
 
-/* ===========================================================
-   BASE / GLOBAL STYLES
-   Applied to the whole page. Sets default font, colors,
-   and reusable utility classes used by every section.
-   =========================================================== */
+/* Base */
 body {
   font-family: var(--font-body);
   font-size: var(--fs-base);
@@ -86,7 +63,6 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-primary);
 }
 
-/* Centered content wrapper — caps width at 1200px on large screens */
 .container {
   width: 100%;
   max-width: var(--container-max);
@@ -94,12 +70,10 @@ h1, h2, h3, h4, h5, h6 {
   padding-inline: var(--container-padding);
 }
 
-/* Consistent vertical padding for every content section */
 .section {
   padding-block: var(--space-3xl);
 }
 
-/* Section heading pattern — centered title with amber underline */
 .section__title {
   font-size: var(--fs-2xl);
   text-align: center;
@@ -125,12 +99,7 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: var(--space-2xl);
 }
 
-
-/* ===========================================================
-   STEP 3a: NAVBAR
-   Fixed top bar. Logo left, nav links right (desktop) or
-   hamburger menu (mobile). Gains shadow on scroll via JS.
-   =========================================================== */
+/* Navbar */
 .navbar {
   position: fixed;
   top: 0;
@@ -143,7 +112,6 @@ h1, h2, h3, h4, h5, h6 {
               box-shadow var(--transition-base);
 }
 
-/* JS adds this class after scrolling 100px — adds translucency + shadow */
 .navbar--scrolled {
   background-color: rgba(17, 17, 25, 0.95);
   box-shadow: var(--shadow-md);
@@ -164,12 +132,10 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 1px;
 }
 
-/* "MQ" highlighted in amber gold */
 .navbar__logo span {
   color: var(--color-accent);
 }
 
-/* Desktop nav links — hidden on mobile, shown at 1024px */
 .navbar__links {
   display: none;
   gap: var(--space-lg);
@@ -188,7 +154,6 @@ h1, h2, h3, h4, h5, h6 {
   transition: color var(--transition-fast);
 }
 
-/* Animated underline on hover — grows from left to right */
 .navbar__links a::after {
   content: '';
   position: absolute;
@@ -210,7 +175,6 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
 }
 
-/* Hamburger button — 3 bars that transform into an X via JS */
 .navbar__hamburger {
   display: flex;
   flex-direction: column;
@@ -229,7 +193,6 @@ h1, h2, h3, h4, h5, h6 {
   transform-origin: center;
 }
 
-/* X animation: top bar rotates down, middle fades, bottom rotates up */
 .navbar__hamburger--active span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
@@ -242,7 +205,6 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* Mobile menu — slides in from right, fills viewport below navbar */
 .navbar__mobile-menu {
   position: fixed;
   top: var(--navbar-height);
@@ -260,7 +222,6 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 999;
 }
 
-/* JS toggles this class to slide the menu into view */
 .navbar__mobile-menu--open {
   transform: translateX(0);
 }
@@ -278,13 +239,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-accent);
 }
 
-
-/* ===========================================================
-   STEP 3b: HERO
-   Full-viewport section with a Splide carousel as the background.
-   Gradient slides crossfade every 5 seconds behind a dark overlay.
-   Company name in large condensed Oswald font sits on top.
-   =========================================================== */
+/* Hero */
 .hero {
   min-height: 100vh;
   min-height: -webkit-fill-available;
@@ -299,8 +254,6 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--color-dark);
 }
 
-/* Background carousel — fills the entire hero via absolute positioning.
-   !important overrides are needed to beat Splide's inline/default styles. */
 .hero__carousel {
   position: absolute !important;
   top: 0 !important;
@@ -328,7 +281,6 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateZ(0);
 }
 
-/* Each slide's gradient card fills the full viewport */
 .hero__carousel .project-card {
   width: 100%;
   height: 100%;
@@ -340,7 +292,11 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
 }
 
-/* Dark overlay sits between carousel and text for readability */
+.hero__carousel .splide__pagination,
+.hero__carousel .splide__arrows {
+  display: none !important;
+}
+
 .hero__overlay {
   position: absolute;
   top: 0;
@@ -351,14 +307,12 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 2;
 }
 
-/* Hero text content — on top of everything */
 .hero__content {
   position: relative;
   z-index: 3;
   max-width: 900px;
 }
 
-/* Large condensed Oswald display font */
 .hero__title {
   font-family: var(--font-display);
   font-size: 5rem;
@@ -391,7 +345,7 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
 }
 
-/* --- Button base (reused across the site) --- */
+/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -419,7 +373,6 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(0);
 }
 
-/* Primary: solid amber gold fill */
 .btn--primary {
   background-color: var(--color-accent);
   color: var(--color-dark);
@@ -429,7 +382,6 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--color-accent-dark);
 }
 
-/* Outline: transparent with amber border, fills on hover */
 .btn--outline {
   background-color: transparent;
   color: var(--color-white);
@@ -441,12 +393,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-dark);
 }
 
-
-/* ===========================================================
-   STEP 3c: COMPANY DESCRIPTION
-   "Who We Are" section with descriptive paragraphs and
-   stat counter cards (15+ Years, 200+ Projects, etc.)
-   =========================================================== */
+/* Company */
 .company {
   background-color: var(--color-white);
 }
@@ -469,7 +416,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0;
 }
 
-/* Stats grid — single column on mobile, 3-column at 768px */
 .company__stats {
   display: grid;
   grid-template-columns: 1fr;
@@ -492,7 +438,6 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--shadow-md);
 }
 
-/* Big amber numbers in Montserrat */
 .stat__number {
   font-family: var(--font-heading);
   font-size: var(--fs-3xl);
@@ -509,18 +454,7 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 1px;
 }
 
-
-/* Hide Splide pagination and arrows in hero carousel */
-.hero__carousel .splide__pagination,
-.hero__carousel .splide__arrows {
-  display: none !important;
-}
-
-/* ===========================================================
-   PROJECT CARD BACKGROUNDS
-   Gradient placeholders for each carousel slide. These fill
-   the hero background. Swap with real images later.
-   =========================================================== */
+/* Project Card Backgrounds */
 .project-card--1 { background: linear-gradient(135deg, #2C3E50, #3498DB); }
 .project-card--2 { background: linear-gradient(135deg, #1A1A2E, #C8963E); }
 .project-card--3 { background: linear-gradient(135deg, #34495E, #2C3E50); }
@@ -528,12 +462,7 @@ h1, h2, h3, h4, h5, h6 {
 .project-card--5 { background: linear-gradient(135deg, #1A1A2E, #6B7280); }
 .project-card--6 { background: linear-gradient(135deg, #3E2723, #C8963E); }
 
-
-/* ===========================================================
-   STEP 3e: ABOUT THE OWNER
-   Two-column layout: portrait placeholder left, bio text right.
-   Stacks vertically on mobile.
-   =========================================================== */
+/* About */
 .about {
   background-color: var(--color-white);
 }
@@ -547,7 +476,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-inline: auto;
 }
 
-/* Portrait placeholder — gradient box with inset amber border */
 .about__portrait {
   width: 100%;
   max-width: 350px;
@@ -566,7 +494,6 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
-/* Decorative inset border */
 .about__portrait::before {
   content: '';
   position: absolute;
@@ -600,12 +527,7 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: var(--space-md);
 }
 
-
-/* ===========================================================
-   STEP 3f: CONTACT FORM
-   Dark charcoal background for visual contrast. Semi-transparent
-   inputs with amber focus borders. Form uses grid for layout.
-   =========================================================== */
+/* Contact */
 .contact {
   background-color: var(--color-primary);
   color: var(--color-white);
@@ -663,7 +585,6 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-muted);
 }
 
-/* Amber border + brighter background on focus */
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
@@ -681,12 +602,7 @@ h1, h2, h3, h4, h5, h6 {
   padding-inline: var(--space-2xl);
 }
 
-
-/* ===========================================================
-   STEP 3g: FOOTER
-   Deep black background grounds the page. Centered layout
-   with quick nav links, IronWorks partnership, copyright.
-   =========================================================== */
+/* Footer */
 .footer {
   background-color: var(--color-dark);
   color: var(--color-muted);
@@ -723,7 +639,6 @@ h1, h2, h3, h4, h5, h6 {
   font-style: italic;
 }
 
-/* "IronWorks" highlighted in amber */
 .footer__partnership span {
   color: var(--color-accent);
   font-weight: var(--fw-medium);
@@ -733,18 +648,10 @@ h1, h2, h3, h4, h5, h6 {
   font-size: var(--fs-sm);
 }
 
-
-/* ===========================================================
-   STEP 4: RESPONSIVE MEDIA QUERIES
-   Mobile-first: base styles above target the smallest screens.
-   These queries progressively enhance at 768px, 1024px, 1440px.
-   =========================================================== */
-
-/* --- TABLET (768px+) --- */
+/* Responsive */
 @media (min-width: 768px) {
-
   :root {
-    --container-padding: var(--space-xl);   /* wider gutters */
+    --container-padding: var(--space-xl);
   }
 
   .section__title {
@@ -759,12 +666,10 @@ h1, h2, h3, h4, h5, h6 {
     font-size: var(--fs-xl);
   }
 
-  /* Stats go 3-across */
   .company__stats {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  /* About section becomes 2-column: portrait | bio */
   .about__grid {
     grid-template-columns: 1fr 1.2fr;
   }
@@ -773,12 +678,10 @@ h1, h2, h3, h4, h5, h6 {
     margin-inline: 0;
   }
 
-  /* Contact form: Name + Email side-by-side */
   .contact__form {
     grid-template-columns: 1fr 1fr;
   }
 
-  /* Company and textarea span full width */
   .contact__form .form-group--full {
     grid-column: 1 / -1;
   }
@@ -788,10 +691,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* --- DESKTOP (1024px+) --- */
 @media (min-width: 1024px) {
-
-  /* Show desktop nav links, hide hamburger */
   .navbar__links {
     display: flex;
   }
@@ -813,9 +713,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* --- LARGE DESKTOP (1440px+) --- */
 @media (min-width: 1440px) {
-
   :root {
     --container-padding: var(--space-2xl);
   }
@@ -825,11 +723,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* ===========================================================
-   SCROLL OFFSET FOR FIXED NAVBAR
-   Tells the browser to offset anchor scroll targets by the
-   navbar height so sections aren't hidden behind it.
-   =========================================================== */
 html {
   scroll-padding-top: var(--navbar-height);
 }

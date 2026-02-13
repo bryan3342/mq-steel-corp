@@ -1,15 +1,3 @@
-/* ===========================================================
-   firebase-config.js — Firebase Project Configuration
-
-   Initializes Firebase and creates a Firestore database
-   instance using the modular SDK v12 (ES module imports
-   from CDN — no npm/bundler needed).
-
-   The config values below are client-side identifiers
-   (not secrets). Security is enforced by Firestore
-   Security Rules, not by hiding these keys.
-   =========================================================== */
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
