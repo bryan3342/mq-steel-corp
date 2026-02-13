@@ -60,32 +60,27 @@ if (navbar) {
 
 
 /* ---------------------------------------------------------
-   3. SPLIDE CAROUSEL INITIALIZATION
-   Configures the project gallery carousel: infinite loop,
-   3 slides on desktop / 2 on tablet / 1 on mobile,
-   autoplay every 4 seconds, pauses on hover/focus.
+   3. SPLIDE HERO BACKGROUND CAROUSEL
+   Full-screen crossfade carousel behind the hero text.
+   1 slide at a time, no controls, auto-rotates every 5s.
    Splide is loaded as a regular script, available as a global.
    --------------------------------------------------------- */
 const carouselEl = document.getElementById('projectCarousel');
 
 if (carouselEl && typeof Splide !== 'undefined') {
   new Splide('#projectCarousel', {
-    type       : 'loop',
-    perPage    : 3,
-    perMove    : 1,
-    gap        : '1.5rem',
-    pagination : true,
-    arrows     : true,
-    autoplay   : true,
-    interval   : 4000,
-    pauseOnHover: true,
-    pauseOnFocus: true,
-    speed      : 600,
-    easing     : 'ease',
-    breakpoints: {
-      1024: { perPage: 2 },
-      640:  { perPage: 1, arrows: false },
-    },
+    type        : 'fade',
+    rewind      : true,
+    perPage     : 1,
+    perMove     : 1,
+    pagination  : false,
+    arrows      : false,
+    autoplay    : true,
+    interval    : 5000,
+    pauseOnHover: false,
+    pauseOnFocus: false,
+    speed       : 1000,
+    easing      : 'ease',
   }).mount();
 }
 
