@@ -199,9 +199,10 @@
     </div>
   </footer>
 
-  <!-- Splide.js v4 (loaded before main.js so Splide constructor is available) -->
+  <!-- Splide.js v4 (regular script — exposes global Splide constructor) -->
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-  <!-- Project JS -->
-  <script src="assets/js/main.js"></script>
+
+  <!-- Project JS (ES module — imports Firebase SDK v12 + Firestore from CDN) -->
+  <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>

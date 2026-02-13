@@ -9,5 +9,13 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Firebase
+.firebase/
+*-debug.log
+firebase-debug.log
+
+# Dependencies
+node_modules/
+
 # Misc
 *.log
