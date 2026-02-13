@@ -287,6 +287,7 @@ h1, h2, h3, h4, h5, h6 {
    =========================================================== */
 .hero {
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -311,6 +312,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero__carousel .splide__track {
   height: 100% !important;
+  overflow: hidden !important;
 }
 
 .hero__carousel .splide__list {
@@ -320,6 +322,10 @@ h1, h2, h3, h4, h5, h6 {
 .hero__carousel .splide__slide {
   height: 100% !important;
   width: 100% !important;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 /* Each slide's gradient card fills the full viewport */
@@ -328,13 +334,19 @@ h1, h2, h3, h4, h5, h6 {
   height: 100%;
   border-radius: 0;
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
 /* Dark overlay sits between carousel and text for readability */
 .hero__overlay {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background: rgba(17, 17, 25, 0.65);
   z-index: 2;
 }
@@ -558,7 +570,10 @@ h1, h2, h3, h4, h5, h6 {
 .about__portrait::before {
   content: '';
   position: absolute;
-  inset: 8px;
+  top: 8px;
+  right: 8px;
+  bottom: 8px;
+  left: 8px;
   border: 2px solid rgba(200, 150, 62, 0.3);
   border-radius: var(--radius-md);
 }
