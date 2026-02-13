@@ -5,10 +5,7 @@ service cloud.firestore {
 
     // Submissions: anyone can create a work order, nobody can read/update/delete
     match /submissions/{docId} {
-      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'service', 'submittedAt', 'status'])
-                    && request.resource.data.name is string
-                    && request.resource.data.email is string
-                    && request.resource.data.service is string;
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'service', 'submittedAt', 'status']);
       allow read, update, delete: if false;
     }
 
