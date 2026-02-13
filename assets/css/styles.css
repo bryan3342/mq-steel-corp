@@ -1,0 +1,846 @@
+/* ===========================================================
+   STEP 2: CUSTOM PROPERTIES & DESIGN TOKENS
+   Single source of truth for colors, fonts, spacing, etc.
+   Every component references these variables instead of
+   hard-coded values, making future theme changes trivial.
+   =========================================================== */
+:root {
+  /* --- Colors (from Phase 1 palette) --- */
+  --color-primary:      #1A1A2E;
+  --color-accent:       #C8963E;
+  --color-dark:         #111119;
+  --color-light:        #F5F4F2;
+  --color-white:        #FFFFFF;
+  --color-muted:        #6B7280;
+
+  /* Accent variants for interactive states */
+  --color-accent-dark:  #A87A2F;
+  --color-accent-light: #D4A94E;
+
+  /* --- Typography --- */
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body:    'Inter', sans-serif;
+
+  --fs-base:  1rem;        /* 16px */
+  --fs-sm:    0.875rem;    /* 14px */
+  --fs-lg:    1.125rem;    /* 18px */
+  --fs-xl:    1.5rem;      /* 24px */
+  --fs-2xl:   2rem;        /* 32px */
+  --fs-3xl:   2.5rem;      /* 40px */
+  --fs-hero:  3rem;        /* 48px — scales up at breakpoints */
+
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* --- Spacing scale (8px base) --- */
+  --space-xs:  0.25rem;    /* 4px  */
+  --space-sm:  0.5rem;     /* 8px  */
+  --space-md:  1rem;       /* 16px */
+  --space-lg:  1.5rem;     /* 24px */
+  --space-xl:  2rem;       /* 32px */
+  --space-2xl: 3rem;       /* 48px */
+  --space-3xl: 4rem;       /* 64px */
+  --space-4xl: 6rem;       /* 96px */
+
+  /* --- Layout --- */
+  --container-max:     1200px;
+  --container-padding: var(--space-md);   /* 16px gutters, grows at breakpoints */
+  --navbar-height:     70px;              /* used for scroll offset calculations */
+
+  /* --- Borders & Radii --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* --- Shadows --- */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+  /* --- Transitions --- */
+  --transition-fast: 200ms ease;
+  --transition-base: 300ms ease;
+  --transition-slow: 500ms ease;
+}
+
+/* ===========================================================
+   BASE / GLOBAL STYLES
+   Applied to the whole page. Sets default font, colors,
+   and reusable utility classes used by every section.
+   =========================================================== */
+body {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-regular);
+  color: var(--color-primary);
+  background-color: var(--color-white);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  line-height: 1.2;
+  color: var(--color-primary);
+}
+
+/* Centered content wrapper — caps width at 1200px on large screens */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+}
+
+/* Consistent vertical padding for every content section */
+.section {
+  padding-block: var(--space-3xl);
+}
+
+/* Section heading pattern — centered title with amber underline */
+.section__title {
+  font-size: var(--fs-2xl);
+  text-align: center;
+  margin-bottom: var(--space-md);
+}
+
+.section__title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background-color: var(--color-accent);
+  margin: var(--space-sm) auto 0;
+  border-radius: 2px;
+}
+
+.section__subtitle {
+  font-size: var(--fs-lg);
+  color: var(--color-muted);
+  text-align: center;
+  max-width: 600px;
+  margin-inline: auto;
+  margin-bottom: var(--space-2xl);
+}
+
+
+/* ===========================================================
+   STEP 3a: NAVBAR
+   Fixed top bar. Logo left, nav links right (desktop) or
+   hamburger menu (mobile). Gains shadow on scroll via JS.
+   =========================================================== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--navbar-height);
+  background-color: var(--color-dark);
+  z-index: 1000;
+  transition: background-color var(--transition-base),
+              box-shadow var(--transition-base);
+}
+
+/* JS adds this class after scrolling 100px — adds translucency + shadow */
+.navbar--scrolled {
+  background-color: rgba(17, 17, 25, 0.95);
+  box-shadow: var(--shadow-md);
+}
+
+.navbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.navbar__logo {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  color: var(--color-white);
+  letter-spacing: 1px;
+}
+
+/* "MQ" highlighted in amber gold */
+.navbar__logo span {
+  color: var(--color-accent);
+}
+
+/* Desktop nav links — hidden on mobile, shown at 1024px */
+.navbar__links {
+  display: none;
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+.navbar__links a {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: var(--space-xs) 0;
+  position: relative;
+  transition: color var(--transition-fast);
+}
+
+/* Animated underline on hover — grows from left to right */
+.navbar__links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-accent);
+  transition: width var(--transition-base);
+}
+
+.navbar__links a:hover,
+.navbar__links a:focus-visible {
+  color: var(--color-accent);
+}
+
+.navbar__links a:hover::after,
+.navbar__links a:focus-visible::after {
+  width: 100%;
+}
+
+/* Hamburger button — 3 bars that transform into an X via JS */
+.navbar__hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: var(--space-xs);
+  z-index: 1001;
+}
+
+.navbar__hamburger span {
+  display: block;
+  width: 25px;
+  height: 2px;
+  background-color: var(--color-white);
+  transition: transform var(--transition-base),
+              opacity var(--transition-fast);
+  transform-origin: center;
+}
+
+/* X animation: top bar rotates down, middle fades, bottom rotates up */
+.navbar__hamburger--active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.navbar__hamburger--active span:nth-child(2) {
+  opacity: 0;
+}
+
+.navbar__hamburger--active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile menu — slides in from right, fills viewport below navbar */
+.navbar__mobile-menu {
+  position: fixed;
+  top: var(--navbar-height);
+  left: 0;
+  width: 100%;
+  height: calc(100vh - var(--navbar-height));
+  background-color: var(--color-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xl);
+  transform: translateX(100%);
+  transition: transform var(--transition-base);
+  z-index: 999;
+}
+
+/* JS toggles this class to slide the menu into view */
+.navbar__mobile-menu--open {
+  transform: translateX(0);
+}
+
+.navbar__mobile-menu a {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-semibold);
+  color: var(--color-white);
+  text-transform: uppercase;
+  transition: color var(--transition-fast);
+}
+
+.navbar__mobile-menu a:hover {
+  color: var(--color-accent);
+}
+
+
+/* ===========================================================
+   STEP 3b: HERO
+   Full-viewport banner with gradient placeholder background,
+   company name, tagline, and two CTA buttons. The ::before
+   overlay is prepared for when a real photo replaces the gradient.
+   =========================================================== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-3xl) var(--container-padding);
+  padding-top: calc(var(--navbar-height) + var(--space-3xl));
+  background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-primary) 50%, #2A2A4E 100%);
+  position: relative;
+}
+
+/* Dark overlay — set opacity > 0 when a real background image is added */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 17, 25, 0.6);
+  z-index: 1;
+  opacity: 0;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+}
+
+.hero__title {
+  font-size: var(--fs-hero);
+  color: var(--color-white);
+  margin-bottom: var(--space-md);
+  line-height: 1.1;
+}
+
+.hero__title span {
+  color: var(--color-accent);
+}
+
+.hero__tagline {
+  font-size: var(--fs-lg);
+  color: var(--color-light);
+  margin-bottom: var(--space-sm);
+  font-weight: var(--fw-medium);
+}
+
+.hero__partnership {
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  margin-bottom: var(--space-xl);
+  font-style: italic;
+}
+
+.hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  justify-content: center;
+}
+
+/* --- Button base (reused across the site) --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2rem;
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast),
+              color var(--transition-fast),
+              transform var(--transition-fast),
+              box-shadow var(--transition-fast);
+  cursor: pointer;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Primary: solid amber gold fill */
+.btn--primary {
+  background-color: var(--color-accent);
+  color: var(--color-dark);
+}
+
+.btn--primary:hover {
+  background-color: var(--color-accent-dark);
+}
+
+/* Outline: transparent with amber border, fills on hover */
+.btn--outline {
+  background-color: transparent;
+  color: var(--color-white);
+  border: 2px solid var(--color-accent);
+}
+
+.btn--outline:hover {
+  background-color: var(--color-accent);
+  color: var(--color-dark);
+}
+
+
+/* ===========================================================
+   STEP 3c: COMPANY DESCRIPTION
+   "Who We Are" section with descriptive paragraphs and
+   stat counter cards (15+ Years, 200+ Projects, etc.)
+   =========================================================== */
+.company {
+  background-color: var(--color-white);
+}
+
+.company__text {
+  max-width: 800px;
+  margin-inline: auto;
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+}
+
+.company__text p {
+  font-size: var(--fs-base);
+  color: var(--color-muted);
+  margin-bottom: var(--space-md);
+  line-height: 1.8;
+}
+
+.company__text p:last-child {
+  margin-bottom: 0;
+}
+
+/* Stats grid — single column on mobile, 3-column at 768px */
+.company__stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+.stat {
+  text-align: center;
+  padding: var(--space-lg);
+  background-color: var(--color-light);
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-base),
+              box-shadow var(--transition-base);
+}
+
+.stat:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Big amber numbers in Montserrat */
+.stat__number {
+  font-family: var(--font-heading);
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-bold);
+  color: var(--color-accent);
+  display: block;
+  margin-bottom: var(--space-xs);
+}
+
+.stat__label {
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+
+/* ===========================================================
+   STEP 3d: PROJECT CAROUSEL
+   Splide.js carousel with 6 placeholder cards. Each card
+   is a gradient-colored box with a project label overlaid.
+   =========================================================== */
+.projects {
+  background-color: var(--color-light);
+}
+
+.projects .splide {
+  max-width: 1100px;
+  margin-inline: auto;
+}
+
+/* Each slide's placeholder card */
+.project-card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 16 / 10;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--space-lg);
+}
+
+/* Bottom gradient overlay — ensures white text is readable */
+.project-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(17, 17, 25, 0.8) 0%, transparent 60%);
+  z-index: 1;
+}
+
+.project-card__label {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  color: var(--color-white);
+  text-align: center;
+}
+
+/* Unique gradient backgrounds for each placeholder slide */
+.project-card--1 { background: linear-gradient(135deg, #2C3E50, #3498DB); }
+.project-card--2 { background: linear-gradient(135deg, #1A1A2E, #C8963E); }
+.project-card--3 { background: linear-gradient(135deg, #34495E, #2C3E50); }
+.project-card--4 { background: linear-gradient(135deg, #2A2A4E, #4A4A6E); }
+.project-card--5 { background: linear-gradient(135deg, #1A1A2E, #6B7280); }
+.project-card--6 { background: linear-gradient(135deg, #3E2723, #C8963E); }
+
+/* Splide arrow overrides — amber gold to match brand */
+.splide__arrow {
+  background-color: var(--color-accent) !important;
+  opacity: 1 !important;
+  width: 40px;
+  height: 40px;
+}
+
+.splide__arrow svg {
+  fill: var(--color-dark) !important;
+}
+
+.splide__arrow:hover {
+  background-color: var(--color-accent-dark) !important;
+}
+
+/* Splide pagination dot overrides */
+.splide__pagination__page {
+  background-color: var(--color-muted) !important;
+}
+
+.splide__pagination__page.is-active {
+  background-color: var(--color-accent) !important;
+  transform: scale(1.3);
+}
+
+
+/* ===========================================================
+   STEP 3e: ABOUT THE OWNER
+   Two-column layout: portrait placeholder left, bio text right.
+   Stacks vertically on mobile.
+   =========================================================== */
+.about {
+  background-color: var(--color-white);
+}
+
+.about__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2xl);
+  align-items: center;
+  max-width: 1000px;
+  margin-inline: auto;
+}
+
+/* Portrait placeholder — gradient box with inset amber border */
+.about__portrait {
+  width: 100%;
+  max-width: 350px;
+  aspect-ratio: 3 / 4;
+  background: linear-gradient(135deg, var(--color-primary), #2A2A4E);
+  border-radius: var(--radius-lg);
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted);
+  font-size: var(--fs-sm);
+  font-style: italic;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative inset border */
+.about__portrait::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 2px solid rgba(200, 150, 62, 0.3);
+  border-radius: var(--radius-md);
+}
+
+.about__bio h3 {
+  font-size: var(--fs-xl);
+  margin-bottom: var(--space-sm);
+  color: var(--color-primary);
+}
+
+.about__bio .about__role {
+  font-size: var(--fs-sm);
+  color: var(--color-accent);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: var(--space-lg);
+}
+
+.about__bio p {
+  font-size: var(--fs-base);
+  color: var(--color-muted);
+  line-height: 1.8;
+  margin-bottom: var(--space-md);
+}
+
+
+/* ===========================================================
+   STEP 3f: CONTACT FORM
+   Dark charcoal background for visual contrast. Semi-transparent
+   inputs with amber focus borders. Form uses grid for layout.
+   =========================================================== */
+.contact {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.contact .section__title {
+  color: var(--color-white);
+}
+
+.contact .section__title::after {
+  background-color: var(--color-accent);
+}
+
+.contact .section__subtitle {
+  color: var(--color-muted);
+}
+
+.contact__form {
+  max-width: 700px;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.form-group label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.875rem var(--space-md);
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+  font-size: var(--fs-base);
+  transition: border-color var(--transition-fast),
+              background-color var(--transition-fast);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--color-muted);
+}
+
+/* Amber border + brighter background on focus */
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.form-group textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.contact__form .btn--primary {
+  justify-self: start;
+  padding-inline: var(--space-2xl);
+}
+
+
+/* ===========================================================
+   STEP 3g: FOOTER
+   Deep black background grounds the page. Centered layout
+   with quick nav links, IronWorks partnership, copyright.
+   =========================================================== */
+.footer {
+  background-color: var(--color-dark);
+  color: var(--color-muted);
+  padding-block: var(--space-2xl);
+}
+
+.footer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  text-align: center;
+}
+
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md) var(--space-lg);
+  justify-content: center;
+}
+
+.footer__links a {
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  transition: color var(--transition-fast);
+}
+
+.footer__links a:hover {
+  color: var(--color-accent);
+}
+
+.footer__partnership {
+  font-size: var(--fs-sm);
+  font-style: italic;
+}
+
+/* "IronWorks" highlighted in amber */
+.footer__partnership span {
+  color: var(--color-accent);
+  font-weight: var(--fw-medium);
+}
+
+.footer__copyright {
+  font-size: var(--fs-sm);
+}
+
+
+/* ===========================================================
+   STEP 4: RESPONSIVE MEDIA QUERIES
+   Mobile-first: base styles above target the smallest screens.
+   These queries progressively enhance at 768px, 1024px, 1440px.
+   =========================================================== */
+
+/* --- TABLET (768px+) --- */
+@media (min-width: 768px) {
+
+  :root {
+    --container-padding: var(--space-xl);   /* wider gutters */
+  }
+
+  .section__title {
+    font-size: var(--fs-3xl);
+  }
+
+  .hero__title {
+    font-size: 3.5rem;
+  }
+
+  .hero__tagline {
+    font-size: var(--fs-xl);
+  }
+
+  /* Stats go 3-across */
+  .company__stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* About section becomes 2-column: portrait | bio */
+  .about__grid {
+    grid-template-columns: 1fr 1.2fr;
+  }
+
+  .about__portrait {
+    margin-inline: 0;
+  }
+
+  /* Contact form: Name + Email side-by-side */
+  .contact__form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Company and textarea span full width */
+  .contact__form .form-group--full {
+    grid-column: 1 / -1;
+  }
+
+  .contact__form .btn--primary {
+    grid-column: 1 / -1;
+  }
+}
+
+/* --- DESKTOP (1024px+) --- */
+@media (min-width: 1024px) {
+
+  /* Show desktop nav links, hide hamburger */
+  .navbar__links {
+    display: flex;
+  }
+
+  .navbar__hamburger {
+    display: none;
+  }
+
+  .navbar__mobile-menu {
+    display: none;
+  }
+
+  .hero__title {
+    font-size: 4rem;
+  }
+
+  .section {
+    padding-block: var(--space-4xl);
+  }
+}
+
+/* --- LARGE DESKTOP (1440px+) --- */
+@media (min-width: 1440px) {
+
+  :root {
+    --container-padding: var(--space-2xl);
+  }
+
+  .hero__title {
+    font-size: 4.5rem;
+  }
+}
+
+/* ===========================================================
+   SCROLL OFFSET FOR FIXED NAVBAR
+   Tells the browser to offset anchor scroll targets by the
+   navbar height so sections aren't hidden behind it.
+   =========================================================== */
+html {
+  scroll-padding-top: var(--navbar-height);
+}

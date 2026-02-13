@@ -1,0 +1,74 @@
+/* ===========================================================
+   CSS RESET — Cross-browser normalization
+   Ensures consistent defaults before any component styles.
+   =========================================================== */
+
+/* Universal box-sizing: padding/border included in width calculations */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Document baseline */
+html {
+  scroll-behavior: smooth;          /* native smooth scroll for anchor links */
+  -webkit-text-size-adjust: 100%;   /* prevents iOS text size inflation */
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Media elements: block-level, constrained to parent width */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Form elements inherit font from parent (picks up Inter from body) */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Prevent long words from overflowing containers */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* Remove default list bullets */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Links: no underline, inherit color (styled per-component) */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Buttons: strip browser chrome (styled per-component) */
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}

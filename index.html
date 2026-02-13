@@ -3,12 +3,205 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MQ Steel Corp Website</title>
+  <title>MQ Steel Corp | Structural Steel Fabrication & Erection</title>
+  <meta name="description" content="MQ Steel Corp specializes in structural steel fabrication, erection, and construction services. In partnership with IronWorks.">
+
+  <!-- Google Fonts: Montserrat (headings) + Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Splide.js v4 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+
+  <!-- Project CSS -->
   <link rel="stylesheet" href="assets/css/reset.css">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
 
+  <!-- ==================== NAVBAR ==================== -->
+  <nav class="navbar" id="navbar">
+    <div class="container navbar__inner">
+      <a href="#home" class="navbar__logo"><span>MQ</span> Steel Corp</a>
+
+      <!-- Desktop nav links (visible at 1024px+) -->
+      <div class="navbar__links">
+        <a href="#home">Home</a>
+        <a href="#work">Our Work</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+
+      <!-- Hamburger button (mobile only) -->
+      <button class="navbar__hamburger" id="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <!-- Mobile slide-in menu -->
+    <div class="navbar__mobile-menu" id="mobileMenu">
+      <a href="#home">Home</a>
+      <a href="#work">Our Work</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- ==================== HERO ==================== -->
+  <section class="hero" id="home">
+    <div class="hero__content">
+      <h1 class="hero__title"><span>MQ</span> Steel Corp</h1>
+      <p class="hero__tagline">Precision Steel Fabrication & Erection Services</p>
+      <p class="hero__partnership">In partnership with IronWorks</p>
+      <div class="hero__ctas">
+        <a href="#work" class="btn btn--primary">View Our Work</a>
+        <a href="#contact" class="btn btn--outline">Get in Touch</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== COMPANY DESCRIPTION ==================== -->
+  <section class="section company" id="about-company">
+    <div class="container">
+      <h2 class="section__title">Who We Are</h2>
+      <p class="section__subtitle">Building America's infrastructure with precision and integrity</p>
+
+      <div class="company__text">
+        <p>MQ Steel Corp is a leading structural steel fabrication and erection company dedicated to delivering exceptional quality on every project. With over 15 years of experience in the industry, we have built a reputation for reliability, precision, and a commitment to safety that is second to none.</p>
+        <p>From commercial buildings and industrial warehouses to complex architectural structures, our team brings expertise and craftsmanship to every beam and bolt. We work closely with general contractors, architects, and engineers to ensure seamless project execution from design to completion.</p>
+        <p>In partnership with IronWorks, we combine our hands-on construction expertise with advanced fabrication technology to deliver projects on time and within budget, no matter the scale or complexity.</p>
+      </div>
+
+      <div class="company__stats">
+        <div class="stat">
+          <span class="stat__number">15+</span>
+          <span class="stat__label">Years of Experience</span>
+        </div>
+        <div class="stat">
+          <span class="stat__number">200+</span>
+          <span class="stat__label">Projects Completed</span>
+        </div>
+        <div class="stat">
+          <span class="stat__number">100%</span>
+          <span class="stat__label">Client Satisfaction</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PROJECT CAROUSEL ==================== -->
+  <section class="section projects" id="work">
+    <div class="container">
+      <h2 class="section__title">Our Work</h2>
+      <p class="section__subtitle">A selection of our recent steel fabrication and erection projects</p>
+
+      <div class="splide" id="projectCarousel" aria-label="Project gallery">
+        <div class="splide__track">
+          <ul class="splide__list">
+            <li class="splide__slide">
+              <div class="project-card project-card--1">
+                <span class="project-card__label">Commercial Steel Framework</span>
+              </div>
+            </li>
+            <li class="splide__slide">
+              <div class="project-card project-card--2">
+                <span class="project-card__label">Industrial Warehouse</span>
+              </div>
+            </li>
+            <li class="splide__slide">
+              <div class="project-card project-card--3">
+                <span class="project-card__label">Multi-Story Office Complex</span>
+              </div>
+            </li>
+            <li class="splide__slide">
+              <div class="project-card project-card--4">
+                <span class="project-card__label">Retail Center Renovation</span>
+              </div>
+            </li>
+            <li class="splide__slide">
+              <div class="project-card project-card--5">
+                <span class="project-card__label">Bridge Reinforcement</span>
+              </div>
+            </li>
+            <li class="splide__slide">
+              <div class="project-card project-card--6">
+                <span class="project-card__label">Custom Architectural Steelwork</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ABOUT THE OWNER ==================== -->
+  <section class="section about" id="about">
+    <div class="container">
+      <h2 class="section__title">Meet the Owner</h2>
+      <p class="section__subtitle">The leadership behind MQ Steel Corp</p>
+
+      <div class="about__grid">
+        <div class="about__portrait">
+          <span>Owner Portrait</span>
+        </div>
+        <div class="about__bio">
+          <h3>MQ Steel Corp Leadership</h3>
+          <p class="about__role">Founder & CEO</p>
+          <p>With a deep-rooted passion for structural steel and over 15 years of hands-on experience in the construction industry, the founder of MQ Steel Corp has built the company from the ground up. Starting as a welder and ironworker, their journey through every facet of steel construction provides a unique perspective that prioritizes quality craftsmanship and worker safety above all.</p>
+          <p>Under their leadership, MQ Steel Corp has grown from a small local operation to a trusted partner for general contractors across the region. Their philosophy is simple: every project deserves the same level of attention, precision, and dedication, whether it is a small storefront or a multi-story commercial building.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CONTACT FORM ==================== -->
+  <section class="section contact" id="contact">
+    <div class="container">
+      <h2 class="section__title">Get in Touch</h2>
+      <p class="section__subtitle">Ready to start your next project? Tell us about it.</p>
+
+      <form class="contact__form" action="#" method="POST" id="contactForm">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" placeholder="Your full name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group form-group--full">
+          <label for="company">Affiliated Company</label>
+          <input type="text" id="company" name="company" placeholder="Your company name (optional)">
+        </div>
+        <div class="form-group form-group--full">
+          <label for="service">Description of Requested Service</label>
+          <textarea id="service" name="service" placeholder="Tell us about your project requirements..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn--primary">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__links">
+        <a href="#home">Home</a>
+        <a href="#work">Our Work</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <p class="footer__partnership">In partnership with <span>IronWorks</span></p>
+      <p class="footer__copyright">&copy; 2026 MQ Steel Corp. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Splide.js v4 (loaded before main.js so Splide constructor is available) -->
+  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+  <!-- Project JS -->
   <script src="assets/js/main.js"></script>
 </body>
 </html>
