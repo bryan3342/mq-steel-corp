@@ -15,6 +15,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Deploy Firestore Rules
+        run: |
+          echo "$FIREBASE_SA" > /tmp/sa.json
+          GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa.json npx firebase-tools deploy --only firestore:rules --project mq-steel-corp
+          rm /tmp/sa.json
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MQ_STEEL_CORP }}
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
