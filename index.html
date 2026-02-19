@@ -6,8 +6,12 @@
   <title>MQ Steel Corp | Structural Steel Fabrication & Erection</title>
   <meta name="description" content="MQ Steel Corp specializes in structural steel fabrication, erection, and construction services. In partnership with IronWorks.">
 
+  <meta name="robots" content="index, follow">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+  <link rel="dns-prefetch" href="https://www.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
   <link rel="stylesheet" href="assets/css/reset.css">
@@ -126,20 +130,21 @@
       <form class="contact__form" action="#" method="POST" id="contactForm">
         <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" id="name" name="name" placeholder="Your full name" required>
+          <input type="text" id="name" name="name" placeholder="Your full name" maxlength="200" required>
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="your@email.com" required>
+          <input type="email" id="email" name="email" placeholder="your@email.com" maxlength="254" required>
         </div>
         <div class="form-group form-group--full">
           <label for="company">Affiliated Company</label>
-          <input type="text" id="company" name="company" placeholder="Your company name (optional)">
+          <input type="text" id="company" name="company" placeholder="Your company name (optional)" maxlength="200">
         </div>
         <div class="form-group form-group--full">
           <label for="service">Description of Requested Service</label>
-          <textarea id="service" name="service" placeholder="Tell us about your project requirements..." required></textarea>
+          <textarea id="service" name="service" placeholder="Tell us about your project requirements..." maxlength="5000" required></textarea>
         </div>
+        <p class="form__consent">By submitting this form, you agree to our <a href="privacy.html">Privacy Policy</a>.</p>
         <button type="submit" class="btn btn--primary">Send Message</button>
       </form>
     </div>
@@ -152,8 +157,10 @@
         <a href="#about-company">Our Work</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
       </div>
       <p class="footer__partnership">In partnership with <span>IronWorks</span></p>
+      <p class="footer__recaptcha">This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a> and <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a> apply.</p>
       <p class="footer__copyright">&copy; 2026 MQ Steel Corp. All rights reserved.</p>
     </div>
   </footer>

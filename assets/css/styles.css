@@ -393,6 +393,14 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-dark);
 }
 
+.btn--loading,
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 /* Company */
 .company {
   background-color: var(--color-white);
@@ -597,6 +605,19 @@ h1, h2, h3, h4, h5, h6 {
   resize: vertical;
 }
 
+.form__consent {
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  opacity: 0.8;
+  grid-column: 1 / -1;
+}
+
+.form__consent a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .contact__form .btn--primary {
   justify-self: start;
   padding-inline: var(--space-2xl);
@@ -644,8 +665,28 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: var(--fw-medium);
 }
 
+.footer__recaptcha {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  opacity: 0.6;
+}
+
+.footer__recaptcha a {
+  color: var(--color-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.footer__recaptcha a:hover {
+  color: var(--color-accent);
+}
+
 .footer__copyright {
   font-size: var(--fs-sm);
+}
+
+.grecaptcha-badge {
+  visibility: hidden;
 }
 
 /* Responsive */

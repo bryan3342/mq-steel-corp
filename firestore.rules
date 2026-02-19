@@ -3,13 +3,38 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Submissions: anyone can create a work order, nobody can read/update/delete
     match /submissions/{docId} {
-      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'service', 'submittedAt', 'status']);
+      allow create: if
+        // Whitelist allowed fields — reject any extra fields
+        request.resource.data.keys().hasOnly(['name', 'email', 'company', 'service', 'submittedAt', 'status']) &&
+        // Required fields must be present
+        request.resource.data.keys().hasAll(['name', 'email', 'service', 'submittedAt', 'status']) &&
+        // name: non-empty string, max 200 chars
+        request.resource.data.name is string &&
+        request.resource.data.name.size() >= 1 &&
+        request.resource.data.name.size() <= 200 &&
+        // email: string, basic length bounds
+        request.resource.data.email is string &&
+        request.resource.data.email.size() >= 5 &&
+        request.resource.data.email.size() <= 254 &&
+        request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$') &&
+        // service: non-empty string, max 5000 chars
+        request.resource.data.service is string &&
+        request.resource.data.service.size() >= 1 &&
+        request.resource.data.service.size() <= 5000 &&
+        // company: optional — if present must be a string under 200 chars
+        (!('company' in request.resource.data) ||
+          (request.resource.data.company is string &&
+           request.resource.data.company.size() <= 200)) &&
+        // submittedAt must be a server timestamp
+        request.resource.data.submittedAt is timestamp &&
+        request.resource.data.submittedAt == request.time &&
+        // status must always be 'new' — clients cannot set other statuses
+        request.resource.data.status == 'new';
+
       allow read, update, delete: if false;
     }
 
-    // Deny everything else by default
     match /{document=**} {
       allow read, write: if false;
     }

@@ -1,0 +1,120 @@
+.privacy {
+  padding-top: calc(var(--navbar-height) + var(--space-3xl));
+  padding-bottom: var(--space-4xl);
+  min-height: 100vh;
+}
+
+.privacy__header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding-bottom: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+}
+
+.privacy__title {
+  font-size: var(--fs-3xl);
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.privacy__meta {
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+.privacy__body {
+  max-width: 800px;
+}
+
+.privacy__section {
+  margin-bottom: var(--space-2xl);
+}
+
+.privacy__section h2 {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-xs);
+  border-bottom: 2px solid var(--color-accent);
+  display: inline-block;
+}
+
+.privacy__section p {
+  font-size: var(--fs-base);
+  color: var(--color-muted);
+  line-height: 1.8;
+  margin-bottom: var(--space-md);
+}
+
+.privacy__section p:last-child {
+  margin-bottom: 0;
+}
+
+.privacy__section ul {
+  list-style: disc;
+  padding-left: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.privacy__section ul li {
+  font-size: var(--fs-base);
+  color: var(--color-muted);
+  line-height: 1.8;
+  margin-bottom: var(--space-xs);
+}
+
+.privacy__section a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+}
+
+.privacy__section a:hover {
+  color: var(--color-accent-dark);
+}
+
+.privacy__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-md);
+  font-size: var(--fs-sm);
+}
+
+.privacy__table th {
+  text-align: left;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-weight: var(--fw-semibold);
+}
+
+.privacy__table td {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--color-muted);
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.privacy__table tr:last-child td {
+  border-bottom: none;
+}
+
+.privacy__table tr:nth-child(even) td {
+  background-color: var(--color-light);
+}
+
+.privacy__table a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+  .privacy__table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}

@@ -93,7 +93,7 @@ if (contactForm) {
 
     submitBtn.textContent = 'Sending...';
     submitBtn.disabled = true;
-    submitBtn.style.opacity = '0.7';
+    submitBtn.classList.add('btn--loading');
 
     try {
       const formData = new FormData(contactForm);
@@ -114,17 +114,17 @@ if (contactForm) {
       setTimeout(() => {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
+        submitBtn.classList.remove('btn--loading');
       }, 3000);
 
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error('Form submission failed:', error.code ?? 'unknown');
       submitBtn.textContent = 'Something went wrong. Try again.';
 
       setTimeout(() => {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
+        submitBtn.classList.remove('btn--loading');
       }, 3000);
     }
   });
