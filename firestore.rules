@@ -19,9 +19,9 @@ service cloud.firestore {
         request.resource.data.email.size() <= 254 &&
         request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$') &&
         // service: non-empty string, max 5000 chars
-        request.resource.data.service is string &&
-        request.resource.data.service.size() >= 1 &&
-        request.resource.data.service.size() <= 5000 &&
+        request.resource.data['service'] is string &&
+        request.resource.data['service'].size() >= 1 &&
+        request.resource.data['service'].size() <= 5000 &&
         // company: optional — if present must be a string under 200 chars
         (!('company' in request.resource.data) ||
           (request.resource.data.company is string &&
