@@ -331,13 +331,6 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: var(--fw-medium);
 }
 
-.hero__partnership {
-  font-size: var(--fs-sm);
-  color: var(--color-muted);
-  margin-bottom: var(--space-xl);
-  font-style: italic;
-}
-
 .hero__ctas {
   display: flex;
   flex-wrap: wrap;
@@ -653,16 +646,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .footer__links a:hover {
   color: var(--color-accent);
-}
-
-.footer__partnership {
-  font-size: var(--fs-sm);
-  font-style: italic;
-}
-
-.footer__partnership span {
-  color: var(--color-accent);
-  font-weight: var(--fw-medium);
 }
 
 .footer__recaptcha {
