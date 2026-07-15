@@ -78,6 +78,7 @@
       "ignore": [
         "**/.*",
         "**/node_modules/**",
+        "scripts/**",
         "*.md"
       ],
       "headers": [
