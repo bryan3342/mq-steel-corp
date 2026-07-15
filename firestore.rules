@@ -3,6 +3,14 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // An admin is any signed-in user with a verified email listed in /admins.
+    // Admins are added/removed from the admin portal by existing admins.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
     match /submissions/{docId} {
       allow create: if
         // Whitelist allowed fields — reject any extra fields
@@ -32,7 +40,25 @@ service cloud.firestore {
         // status must always be 'new' — clients cannot set other statuses
         request.resource.data.status == 'new';
 
-      allow read, update, delete: if false;
+      // Admins (from the portal) may read submissions and update only the
+      // status / notes fields — the submitter's own data stays tamper-proof.
+      allow read: if isAdmin();
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'adminNotes', 'updatedAt'])
+        && request.resource.data.status in ['new', 'contacted', 'closed'];
+      allow delete: if false;
+    }
+
+    // Admin allowlist. A signed-in user may read ONLY their own doc — even before their
+    // email is verified — so the app can route them to the "verify email" step. Accounts
+    // and this allowlist are managed by IT on the terminal (Admin SDK bypasses these
+    // rules); clients can never list, add, or remove entries. The email-verified check
+    // in isAdmin() also prevents gaining access by signing up as an allowlisted address
+    // you don't actually control.
+    match /admins/{adminEmail} {
+      allow get: if request.auth != null && request.auth.token.email == adminEmail;
+      allow list, create, update, delete: if false;
     }
 
     match /{document=**} {

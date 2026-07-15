@@ -20,4 +20,5 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MQ_STEEL_CORP }}
           projectId: mq-steel-corp
+          target: public
           channelId: live
