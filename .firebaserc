@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "mq-steel-corp"
+  },
+  "targets": {
+    "mq-steel-corp": {
+      "hosting": {
+        "public": [
+          "mq-steel-corp"
+        ],
+        "admin": [
+          "mq-steel-admin"
+        ]
+      }
+    }
   }
 }

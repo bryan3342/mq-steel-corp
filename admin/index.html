@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MQ Steel Corp — Admin Portal</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+  <!-- Header (shown only when signed in as an admin) -->
+  <header class="appbar" id="app-header" hidden>
+    <div class="appbar__brand"><span>MQ</span> Steel Corp · Admin</div>
+    <div class="appbar__user">
+      <span id="user-email" class="appbar__email"></span>
+      <button type="button" class="btn btn--ghost btn--small" data-signout>Sign out</button>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Loading -->
+    <section id="loading-view" class="centered" hidden>
+      <div class="spinner" aria-label="Loading"></div>
+    </section>
+
+    <!-- Signed out: email + password -->
+    <section id="signin-view" class="centered" hidden>
+      <form class="card-lg" id="signin-form">
+        <h1 class="card-lg__title"><span>MQ</span> Steel Corp</h1>
+        <p class="card-lg__sub">Admin Portal</p>
+
+        <label class="field-block">
+          <span class="field__label">Email</span>
+          <input type="email" id="email" class="input" autocomplete="username" required>
+        </label>
+        <label class="field-block">
+          <span class="field__label">Password</span>
+          <input type="password" id="password" class="input" autocomplete="current-password" required>
+        </label>
+
+        <p id="signin-msg" class="form-msg" hidden></p>
+
+        <button type="submit" class="btn btn--primary btn--block" id="signin-btn">Sign in</button>
+        <p class="card-lg__hint">Accounts are managed by IT. Contact IT for access or a password reset.</p>
+      </form>
+    </section>
+
+    <!-- Signed in, allowlisted, email not yet verified (rare — accounts are provisioned verified) -->
+    <section id="verify-view" class="centered" hidden>
+      <div class="card-lg">
+        <h1 class="card-lg__title">Verify your email</h1>
+        <p class="card-lg__sub">This account (<strong id="verify-email"></strong>) isn't verified yet.</p>
+        <button type="button" class="btn btn--primary btn--block" id="verify-continue">I've verified — continue</button>
+        <div class="card-lg__links">
+          <button type="button" class="link" id="resend-btn">Resend verification email</button>
+          <button type="button" class="link" data-signout>Sign out</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Signed in, not on the allowlist -->
+    <section id="denied-view" class="centered" hidden>
+      <div class="card-lg">
+        <h1 class="card-lg__title">No access</h1>
+        <p class="card-lg__sub">The account <strong id="denied-email"></strong> isn't on the admin team.</p>
+        <p class="card-lg__hint">Contact IT to be granted access.</p>
+        <button type="button" class="btn btn--ghost" data-signout>Sign out</button>
+      </div>
+    </section>
+
+    <!-- Dashboard (Requests) -->
+    <section id="app-view" class="app" hidden>
+      <div class="toolbar">
+        <input type="search" id="search-input" class="input" placeholder="Search name, email, company, message…" aria-label="Search requests">
+        <select id="status-filter" class="input input--select" aria-label="Filter by status">
+          <option value="all">All statuses</option>
+          <option value="new">New</option>
+          <option value="contacted">Contacted</option>
+          <option value="closed">Closed</option>
+        </select>
+        <span class="toolbar__count"><strong id="requests-count">0</strong> requests</span>
+      </div>
+      <div id="requests-list" class="requests"></div>
+    </section>
+
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "mq-steel-admin-scripts",
+  "description": "One-off terminal scripts for the admin portal (first-admin bootstrap)",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}

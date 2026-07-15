@@ -1,5 +1,6 @@
 import { db } from './firebase-config.js';
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { EMAILJS } from './email-config.js';
 
 /* Mobile Menu */
 const hamburger  = document.getElementById('hamburger');
@@ -81,8 +82,54 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
-/* Contact Form Submission */
+/* Contact Form Submission + Email Notifications */
 const contactForm = document.getElementById('contactForm');
+
+/*
+ * Notify the team (and auto-reply to the sender) via EmailJS — client-side, no backend.
+ * Best-effort: the Firestore write above is the source of truth, so a failed send never
+ * loses the submission (it stays visible in the console). Skips cleanly until EmailJS is
+ * configured in assets/js/email-config.js. Never throws — resolves after all sends settle.
+ */
+async function sendRequestEmails(submission) {
+  const templates = [
+    ['internal',   EMAILJS.templateInternal],
+    ['auto-reply', EMAILJS.templateAutoReply],
+  ].filter(([, id]) => id && !id.startsWith('YOUR_'));
+
+  if (!EMAILJS.publicKey || EMAILJS.publicKey.startsWith('YOUR_') || !templates.length) return;
+
+  const templateParams = {
+    name:         submission.name,
+    email:        submission.email,
+    company:      submission.company || '—',
+    service:      submission.service,
+    submitted_at: new Date().toLocaleString('en-US', {
+      timeZone: 'America/New_York', dateStyle: 'medium', timeStyle: 'short',
+    }),
+  };
+
+  const send = (templateId) =>
+    fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id:      EMAILJS.serviceId,
+        template_id:     templateId,
+        user_id:         EMAILJS.publicKey,
+        template_params: templateParams,
+      }),
+    }).then((res) => {
+      if (!res.ok) throw new Error(`EmailJS ${res.status}`);
+    });
+
+  const results = await Promise.allSettled(templates.map(([, id]) => send(id)));
+  results.forEach((r, i) => {
+    if (r.status === 'rejected') {
+      console.error(`Notification email (${templates[i][0]}) failed:`, r.reason?.message ?? 'unknown');
+    }
+  });
+}
 
 if (contactForm) {
   contactForm.addEventListener('submit', async (e) => {
@@ -110,6 +157,13 @@ if (contactForm) {
 
       submitBtn.textContent = 'Message Sent!';
       contactForm.reset();
+
+      // Best-effort notification — never let an email failure undo the confirmed save.
+      try {
+        await sendRequestEmails(submission);
+      } catch (notifyError) {
+        console.error('Notification failed:', notifyError?.message ?? 'unknown');
+      }
 
       setTimeout(() => {
         submitBtn.textContent = originalText;
