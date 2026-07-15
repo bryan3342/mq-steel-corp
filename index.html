@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MQ Steel Corp | Structural Steel Fabrication & Erection</title>
-  <meta name="description" content="MQ Steel Corp specializes in structural steel fabrication, erection, and construction services. In partnership with IronWorks.">
+  <meta name="description" content="MQ Steel Corp specializes in structural steel fabrication, erection, welding, and architectural steel. View our work in welding, structural steel, and architectural metalwork.">
 
   <meta name="robots" content="index, follow">
 
@@ -24,7 +24,7 @@
       <a href="#home" class="navbar__logo"><span>MQ</span> Steel Corp</a>
       <div class="navbar__links">
         <a href="#home">Home</a>
-        <a href="#about-company">Our Work</a>
+        <a href="#work">Our Work</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
       </div>
@@ -36,7 +36,7 @@
     </div>
     <div class="navbar__mobile-menu" id="mobileMenu">
       <a href="#home">Home</a>
-      <a href="#about-company">Our Work</a>
+      <a href="#work">Our Work</a>
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
     </div>
@@ -47,47 +47,52 @@
       <div class="splide__track">
         <ul class="splide__list">
           <li class="splide__slide">
-            <div class="project-card project-card--1"></div>
+            <img class="hero__img" src="assets/images/hero-01.jpg" alt="Steel building skeleton erected against a blue sky" width="1600" height="1200">
           </li>
           <li class="splide__slide">
-            <div class="project-card project-card--2"></div>
+            <img class="hero__img" src="assets/images/hero-02.jpg" alt="Steel building frame under construction" width="1600" height="1200">
           </li>
           <li class="splide__slide">
-            <div class="project-card project-card--3"></div>
+            <img class="hero__img" src="assets/images/hero-03.jpg" alt="Rooftop steel canopy over a city skyline" width="1600" height="1200">
           </li>
           <li class="splide__slide">
-            <div class="project-card project-card--4"></div>
+            <img class="hero__img" src="assets/images/hero-04.jpg" alt="Structural steel floor framing over a foundation" width="1600" height="1200">
           </li>
           <li class="splide__slide">
-            <div class="project-card project-card--5"></div>
-          </li>
-          <li class="splide__slide">
-            <div class="project-card project-card--6"></div>
+            <img class="hero__img" src="assets/images/hero-05.jpg" alt="Multi-level structural steel frame erection" width="1600" height="1200">
           </li>
         </ul>
       </div>
     </div>
     <div class="hero__overlay"></div>
     <div class="hero__content">
+      <p class="eyebrow hero__eyebrow" data-num="//">Structural Steel &middot; Welding &middot; Architecture</p>
       <h1 class="hero__title">MQ STEEL CORP</h1>
-      <p class="hero__tagline">Welding Precision & Structural Excellence</p>
+      <p class="hero__tagline">Welding Precision &amp; Structural Excellence</p>
       <div class="hero__ctas">
-        <a href="#about-company" class="btn btn--primary">View Our Work</a>
+        <a href="#work" class="btn btn--primary">View Our Work</a>
         <a href="#contact" class="btn btn--outline">Get in Touch</a>
       </div>
     </div>
   </section>
 
   <section class="section company" id="about-company">
-    <div class="container">
-      <h2 class="section__title">Who We Are</h2>
-      <p class="section__subtitle">Building America's infrastructure with precision and integrity</p>
-      <div class="company__text">
-        <p>MQ Steel Corp is a leading structural steel fabrication and erection company dedicated to delivering exceptional quality on every project. With over 15 years of experience in the industry, we have built a reputation for reliability, precision, and a commitment to safety that is second to none.</p>
-        <p>From commercial buildings and industrial warehouses to complex architectural structures, our team brings expertise and craftsmanship to every beam and bolt. We work closely with general contractors, architects, and engineers to ensure seamless project execution from design to completion.</p>
-        <p>In partnership with IronWorks, we combine our hands-on construction expertise with advanced fabrication technology to deliver projects on time and within budget, no matter the scale or complexity.</p>
+    <div class="container company__grid">
+      <div class="company__col">
+        <p class="eyebrow" data-num="01">Who We Are</p>
+        <h2 class="section__title company__title">Building America's infrastructure with precision and integrity</h2>
+        <div class="company__text">
+          <p>MQ Steel Corp is a leading structural steel fabrication and erection company dedicated to delivering exceptional quality on every project. With over 15 years of experience in the industry, we have built a reputation for reliability, precision, and a commitment to safety that is second to none.</p>
+          <p>From commercial buildings and industrial warehouses to complex architectural structures, our team brings expertise and craftsmanship to every beam and bolt. We work closely with general contractors, architects, and engineers to ensure seamless project execution from design to completion.</p>
+          <p>In partnership with IronWorks, we combine our hands-on construction expertise with advanced fabrication technology to deliver projects on time and within budget, no matter the scale or complexity.</p>
+        </div>
       </div>
-      <div class="company__stats">
+      <div class="company__media blueprint">
+        <img src="assets/images/projects/structural-07.jpg" alt="MQ Steel Corp overhead structural steel beam framing" loading="lazy" width="1400" height="1050">
+      </div>
+    </div>
+    <div class="company__stats-band band">
+      <div class="container company__stats">
         <div class="stat">
           <span class="stat__number">15+</span>
           <span class="stat__label">Years of Experience</span>
@@ -104,17 +109,205 @@
     </div>
   </section>
 
+  <section class="section work" id="work">
+    <div class="container">
+      <p class="eyebrow" data-num="02">Our Work</p>
+      <h2 class="section__title">Steel that stands the test of time</h2>
+      <p class="section__subtitle">A selection of our welding, structural, and architectural steel projects.</p>
+
+      <div class="filter" role="group" aria-label="Filter projects by type">
+        <button class="filter__chip filter__chip--active" data-filter="all" aria-pressed="true">All</button>
+        <button class="filter__chip" data-filter="welding" aria-pressed="false">Welding</button>
+        <button class="filter__chip" data-filter="structural" aria-pressed="false">Structural</button>
+        <button class="filter__chip" data-filter="architectural" aria-pressed="false">Architectural</button>
+      </div>
+
+      <ul class="work__grid">
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-01.jpg" data-alt="Steel frame erection">
+            <img src="assets/images/projects/structural-01.jpg" alt="Steel frame erection" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-01.jpg" data-alt="Ornamental iron railings and steps">
+            <img src="assets/images/projects/architectural-01.jpg" alt="Ornamental iron railings and steps" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="welding">
+          <button class="work__btn" type="button" data-full="assets/images/projects/welding-01.jpg" data-alt="Welding a structural steel beam">
+            <img src="assets/images/projects/welding-01.jpg" alt="Welding a structural steel beam" loading="lazy">
+            <span class="work__tag">Welding</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-02.jpg" data-alt="Metal deck floor framing">
+            <img src="assets/images/projects/structural-02.jpg" alt="Metal deck floor framing" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-02.jpg" data-alt="Galvanized spiral staircase">
+            <img src="assets/images/projects/architectural-02.jpg" alt="Galvanized spiral staircase" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-03.jpg" data-alt="Interior steel beam framing">
+            <img src="assets/images/projects/structural-03.jpg" alt="Interior steel beam framing" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-03.jpg" data-alt="Finished black steel staircase">
+            <img src="assets/images/projects/architectural-03.jpg" alt="Finished black steel staircase" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-04.jpg" data-alt="Crane hoisting a steel beam">
+            <img src="assets/images/projects/structural-04.jpg" alt="Crane hoisting a steel beam" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-04.jpg" data-alt="Primed steel spiral staircase">
+            <img src="assets/images/projects/architectural-04.jpg" alt="Primed steel spiral staircase" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="welding">
+          <button class="work__btn" type="button" data-full="assets/images/projects/welding-02.jpg" data-alt="Overhead welding on scaffold">
+            <img src="assets/images/projects/welding-02.jpg" alt="Overhead welding on scaffold" loading="lazy">
+            <span class="work__tag">Welding</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-05.jpg" data-alt="Braced steel frame">
+            <img src="assets/images/projects/structural-05.jpg" alt="Braced steel frame" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-05.jpg" data-alt="Ornamental iron balconies">
+            <img src="assets/images/projects/architectural-05.jpg" alt="Ornamental iron balconies" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-06.jpg" data-alt="Bolted steel connection detail">
+            <img src="assets/images/projects/structural-06.jpg" alt="Bolted steel connection detail" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-06.jpg" data-alt="Steel staircase with glass railings">
+            <img src="assets/images/projects/architectural-06.jpg" alt="Steel staircase with glass railings" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-07.jpg" data-alt="Overhead steel beam framing">
+            <img src="assets/images/projects/structural-07.jpg" alt="Overhead steel beam framing" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-07.jpg" data-alt="Steel staircase with cable railing">
+            <img src="assets/images/projects/architectural-07.jpg" alt="Steel staircase with cable railing" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-08.jpg" data-alt="Structural steel canopy framing">
+            <img src="assets/images/projects/structural-08.jpg" alt="Structural steel canopy framing" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-08.jpg" data-alt="Multi-level steel and glass railings">
+            <img src="assets/images/projects/architectural-08.jpg" alt="Multi-level steel and glass railings" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-09.jpg" data-alt="Structural steel column">
+            <img src="assets/images/projects/structural-09.jpg" alt="Structural steel column" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-09.jpg" data-alt="Steel staircase with cable railings">
+            <img src="assets/images/projects/architectural-09.jpg" alt="Steel staircase with cable railings" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-10.jpg" data-alt="Cross-braced steel frame">
+            <img src="assets/images/projects/structural-10.jpg" alt="Cross-braced steel frame" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-10.jpg" data-alt="Fabricated switchback staircase">
+            <img src="assets/images/projects/architectural-10.jpg" alt="Fabricated switchback staircase" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-11.jpg" data-alt="Steel portal frame erection">
+            <img src="assets/images/projects/structural-11.jpg" alt="Steel portal frame erection" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-11.jpg" data-alt="Exterior steel fire escape">
+            <img src="assets/images/projects/architectural-11.jpg" alt="Exterior steel fire escape" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-12.jpg" data-alt="Ironworkers hoisting a beam">
+            <img src="assets/images/projects/structural-12.jpg" alt="Ironworkers hoisting a beam" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-12.jpg" data-alt="Black steel stairwell handrail">
+            <img src="assets/images/projects/architectural-12.jpg" alt="Black steel stairwell handrail" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-13.jpg" data-alt="Staging structural steel beams">
+            <img src="assets/images/projects/structural-13.jpg" alt="Staging structural steel beams" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Project image viewer">
+      <button class="lightbox__close" type="button" aria-label="Close viewer">&times;</button>
+      <button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="Previous image">&#8249;</button>
+      <img class="lightbox__img" src="" alt="">
+      <button class="lightbox__nav lightbox__nav--next" type="button" aria-label="Next image">&#8250;</button>
+    </div>
+  </section>
+
   <section class="section about" id="about">
     <div class="container">
+      <p class="eyebrow" data-num="03">Leadership</p>
       <h2 class="section__title">Meet the Owner</h2>
       <p class="section__subtitle">The leadership behind MQ Steel Corp</p>
       <div class="about__grid">
-        <div class="about__portrait">
-          <span>Owner Portrait</span>
+        <div class="about__portrait blueprint">
+          <img src="assets/images/owner.jpg" alt="MQ Steel Corp founder on site, connecting a steel roof beam" loading="lazy" width="900" height="1200">
         </div>
         <div class="about__bio">
           <h3>MQ Steel Corp Leadership</h3>
-          <p class="about__role">Founder & CEO</p>
+          <p class="about__role">Founder &amp; CEO</p>
           <p>With a deep-rooted passion for structural steel and over 15 years of hands-on experience in the construction industry, the founder of MQ Steel Corp has built the company from the ground up. Starting as a welder and ironworker, their journey through every facet of steel construction provides a unique perspective that prioritizes quality craftsmanship and worker safety above all.</p>
           <p>Under their leadership, MQ Steel Corp has grown from a small local operation to a trusted partner for general contractors across the region. Their philosophy is simple: every project deserves the same level of attention, precision, and dedication, whether it is a small storefront or a multi-story commercial building.</p>
         </div>
@@ -124,6 +317,7 @@
 
   <section class="section contact" id="contact">
     <div class="container">
+      <p class="eyebrow" data-num="04">Contact</p>
       <h2 class="section__title">Get in Touch</h2>
       <p class="section__subtitle">Ready to start your next project? Tell us about it.</p>
       <form class="contact__form" action="#" method="POST" id="contactForm">
@@ -153,7 +347,7 @@
     <div class="container footer__inner">
       <div class="footer__links">
         <a href="#home">Home</a>
-        <a href="#about-company">Our Work</a>
+        <a href="#work">Our Work</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
         <a href="privacy.html">Privacy Policy</a>
@@ -165,5 +359,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
   <script type="module" src="assets/js/main.js"></script>
+  <script defer src="assets/js/portfolio.js"></script>
 </body>
 </html>
