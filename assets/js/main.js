@@ -92,12 +92,18 @@ const contactForm = document.getElementById('contactForm');
  * configured in assets/js/email-config.js. Never throws — resolves after all sends settle.
  */
 async function sendRequestEmails(submission) {
-  const templates = [
-    ['internal',   EMAILJS.templateInternal],
-    ['auto-reply', EMAILJS.templateAutoReply],
-  ].filter(([, id]) => id && !id.startsWith('YOUR_'));
+  if (!EMAILJS.publicKey || EMAILJS.publicKey.startsWith('YOUR_')) return;
 
-  if (!EMAILJS.publicKey || EMAILJS.publicKey.startsWith('YOUR_') || !templates.length) return;
+  // Each job runs through its OWN EmailJS service so the "From" is the right account:
+  // internal → adminmqsteel@gmail.com, auto-reply → mqsteelco@gmail.com.
+  const jobs = [
+    ['internal',   EMAILJS.internal],
+    ['auto-reply', EMAILJS.autoReply],
+  ].filter(([, cfg]) =>
+    cfg?.serviceId && cfg?.templateId &&
+    !cfg.serviceId.startsWith('YOUR_') && !cfg.templateId.startsWith('YOUR_'));
+
+  if (!jobs.length) return;
 
   const templateParams = {
     name:         submission.name,
@@ -109,12 +115,12 @@ async function sendRequestEmails(submission) {
     }),
   };
 
-  const send = (templateId) =>
+  const send = ({ serviceId, templateId }) =>
     fetch('https://api.emailjs.com/api/v1.0/email/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        service_id:      EMAILJS.serviceId,
+        service_id:      serviceId,
         template_id:     templateId,
         user_id:         EMAILJS.publicKey,
         template_params: templateParams,
@@ -123,10 +129,10 @@ async function sendRequestEmails(submission) {
       if (!res.ok) throw new Error(`EmailJS ${res.status}`);
     });
 
-  const results = await Promise.allSettled(templates.map(([, id]) => send(id)));
+  const results = await Promise.allSettled(jobs.map(([, cfg]) => send(cfg)));
   results.forEach((r, i) => {
     if (r.status === 'rejected') {
-      console.error(`Notification email (${templates[i][0]}) failed:`, r.reason?.message ?? 'unknown');
+      console.error(`Notification email (${jobs[i][0]}) failed:`, r.reason?.message ?? 'unknown');
     }
   });
 }

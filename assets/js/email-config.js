@@ -1,25 +1,26 @@
 // ─── EmailJS configuration ──────────────────────────────────────────────────
-// These are PUBLIC identifiers — safe to expose in client code, exactly like the
-// Firebase web config. Sending is protected by locking the EmailJS account to this
-// site's domain (and, recommended, EmailJS's own reCAPTCHA on each template).
+// PUBLIC identifiers — safe to expose in client code, exactly like the Firebase web
+// config. Sending is protected by locking the EmailJS account to this site's domain
+// (Account → Security → allowed domains: mq-steel-corp.web.app).
 //
-// One-time setup at https://dashboard.emailjs.com:
-//   1. Add an email service (e.g. Gmail / your SMTP)              → serviceId
-//   2. Create two templates:
-//        • Internal notification — set the template's "To" to your
-//          team's sendee list (edit recipients here anytime, no redeploy) → templateInternal
-//        • Auto-reply — set the template's "To" to {{email}}             → templateAutoReply
-//      Both templates can use these variables: {{name}} {{email}}
-//      {{company}} {{service}} {{submitted_at}}
-//   3. Account → General → Public Key                            → publicKey
-//   4. Account → Security → enable "Allow requests only from allowed domains"
-//      and add mq-steel-corp.web.app (+ any custom domain).
-//
-// Until the placeholders below are replaced, the form still works — email sending
-// is simply skipped.
+// Two services / two templates:
+//   • internal  → sent through the adminmqsteel@gmail.com service; the template's To is
+//     mqsteelco@gmail.com (the inquiries inbox) and Reply-To is {{email}} (the lead).
+//   • autoReply → sent through the mqsteelco@gmail.com service; the template's To is
+//     {{email}} (the submitter) and it shows as "MQ Steel Corp".
+// Templates use: {{name}} {{email}} {{company}} {{service}} {{submitted_at}}
 export const EMAILJS = {
-  publicKey:         'YOUR_EMAILJS_PUBLIC_KEY',
-  serviceId:         'YOUR_EMAILJS_SERVICE_ID',
-  templateInternal:  'YOUR_INTERNAL_TEMPLATE_ID',
-  templateAutoReply: 'YOUR_AUTOREPLY_TEMPLATE_ID',
+  publicKey: 'SCvPKJbJEy-dE6sLG',
+
+  // Internal notification → adminmqsteel@gmail.com service
+  internal: {
+    serviceId:  'service_kmxc7y5',
+    templateId: 'template_c5l2qqv',
+  },
+
+  // Auto-reply to the submitter → mqsteelco@gmail.com service
+  autoReply: {
+    serviceId:  'service_n1gvcsp',
+    templateId: 'template_58d0qqm',
+  },
 };
