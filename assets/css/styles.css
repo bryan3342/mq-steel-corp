@@ -182,7 +182,7 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 1px;
 }
 
-.navbar__logo span {
+.navbar__logo-mq {
   color: var(--color-accent);
 }
 
@@ -857,6 +857,23 @@ h1, h2, h3, h4, h5, h6 {
   padding-inline: var(--space-2xl);
 }
 
+/* Hide the form once submitted (class beats .contact__form's display: grid) */
+.contact__form[hidden] {
+  display: none;
+}
+
+.contact__success {
+  max-width: 700px;
+  margin-inline: auto;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  color: var(--color-accent);
+  line-height: 1.4;
+  padding-block: var(--space-2xl);
+}
+
 /* Footer */
 .footer {
   background-color: var(--color-dark);
@@ -1010,6 +1027,42 @@ h1, h2, h3, h4, h5, h6 {
 
   .hero__title {
     font-size: 11rem;
+  }
+}
+
+/* 3D gallery: scroll reveal + hover tilt (progressive enhancement via .js-reveal) */
+.work__grid.js-reveal .work__item {
+  opacity: 0;
+  transform: perspective(900px) translateY(30px) rotateX(-7deg) scale(0.97);
+  transform-origin: center bottom;
+  transition: opacity 0.6s ease,
+              transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.work__grid.js-reveal .work__item.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.work__grid.js-reveal .work__btn {
+  transform: perspective(700px) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg));
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.work__grid.js-reveal .work__btn:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work__grid.js-reveal .work__item,
+  .work__grid.js-reveal .work__item.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .work__grid.js-reveal .work__btn {
+    transform: none;
+    transition: none;
   }
 }
 
