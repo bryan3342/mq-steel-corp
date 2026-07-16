@@ -36,12 +36,14 @@ cd admin/scripts
 # Firebase Console → Project settings → Service accounts → Generate new private key,
 # save it here as serviceAccountKey.json (git-ignored)
 npm install
-node provision-admin.mjs someone@mqsteelcorp.com 'a-strong-password'
+node provision-admin.mjs someone@mqsteelcorp.com
+# → you'll be prompted for the password (hidden). The password is NOT passed as an
+#   argument, so it never lands in shell history or `ps`. (Or set ADMIN_PW=... inline.)
 ```
 
 - **Add an admin:** run it with a new email — creates the account (pre-verified) and
-  allowlists them.
-- **Reset a password:** run it again with the same email and a new password.
+  allowlists them. Password must be at least 12 characters.
+- **Reset a password:** run it again with the same email and enter the new password.
 - **Remove an admin:** delete their user in Firebase Console → Authentication, and delete
   their document from the `admins` collection in Firestore.
 

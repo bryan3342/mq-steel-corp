@@ -85,31 +85,34 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 /* Contact Form Submission + Email Notifications */
 const contactForm = document.getElementById('contactForm');
 
+const CONTACT_ERROR_MSG = 'Something went wrong. Try again.';
+const BUTTON_RESET_MS = 3000;
+
+// A placeholder value (e.g. 'YOUR_…') means that EmailJS id hasn't been configured yet.
+const isConfigured = (v) => typeof v === 'string' && v.length > 0 && !v.startsWith('YOUR_');
+
 /*
  * Notify the team (and auto-reply to the sender) via EmailJS — client-side, no backend.
- * Best-effort: the Firestore write above is the source of truth, so a failed send never
- * loses the submission (it stays visible in the console). Skips cleanly until EmailJS is
- * configured in assets/js/email-config.js. Never throws — resolves after all sends settle.
+ * Best-effort: the Firestore write is the source of truth, so a failed send never loses
+ * the submission. Each job runs through its OWN EmailJS service so the "From" is the right
+ * account (internal → adminmqsteel@gmail.com, auto-reply → mqsteelco@gmail.com). Skips
+ * cleanly until EmailJS is configured. Never throws — resolves after all sends settle.
  */
-async function sendRequestEmails(submission) {
-  if (!EMAILJS.publicKey || EMAILJS.publicKey.startsWith('YOUR_')) return;
+async function sendRequestEmails(lead) {
+  if (!isConfigured(EMAILJS.publicKey)) return;
 
-  // Each job runs through its OWN EmailJS service so the "From" is the right account:
-  // internal → adminmqsteel@gmail.com, auto-reply → mqsteelco@gmail.com.
   const jobs = [
-    ['internal',   EMAILJS.internal],
-    ['auto-reply', EMAILJS.autoReply],
-  ].filter(([, cfg]) =>
-    cfg?.serviceId && cfg?.templateId &&
-    !cfg.serviceId.startsWith('YOUR_') && !cfg.templateId.startsWith('YOUR_'));
+    { label: 'internal',   cfg: EMAILJS.internal },
+    { label: 'auto-reply', cfg: EMAILJS.autoReply },
+  ].filter(({ cfg }) => cfg && isConfigured(cfg.serviceId) && isConfigured(cfg.templateId));
 
   if (!jobs.length) return;
 
   const templateParams = {
-    name:         submission.name,
-    email:        submission.email,
-    company:      submission.company || '—',
-    service:      submission.service,
+    name:         lead.name,
+    email:        lead.email,
+    company:      lead.company || '—',
+    service:      lead.service,
     submitted_at: new Date().toLocaleString('en-US', {
       timeZone: 'America/New_York', dateStyle: 'medium', timeStyle: 'short',
     }),
@@ -129,10 +132,10 @@ async function sendRequestEmails(submission) {
       if (!res.ok) throw new Error(`EmailJS ${res.status}`);
     });
 
-  const results = await Promise.allSettled(jobs.map(([, cfg]) => send(cfg)));
+  const results = await Promise.allSettled(jobs.map(({ cfg }) => send(cfg)));
   results.forEach((r, i) => {
     if (r.status === 'rejected') {
-      console.error(`Notification email (${jobs[i][0]}) failed:`, r.reason?.message ?? 'unknown');
+      console.error(`Notification email (${jobs[i].label}) failed:`, r.reason?.message ?? 'unknown');
     }
   });
 }
@@ -142,6 +145,7 @@ if (contactForm) {
     e.preventDefault();
 
     const submitBtn = contactForm.querySelector('button[type="submit"]');
+    if (!submitBtn) return;
     const originalText = submitBtn.textContent;
 
     submitBtn.textContent = 'Sending...';
@@ -150,16 +154,20 @@ if (contactForm) {
 
     try {
       const formData = new FormData(contactForm);
-      const submission = {
-        name:        formData.get('name'),
-        email:       formData.get('email'),
-        company:     formData.get('company') || '',
-        service:     formData.get('service'),
-        submittedAt: serverTimestamp(),
-        status:      'new',
+      // The lead is what the email templates need; the Firestore document adds the
+      // server timestamp + status separately (kept distinct from the email payload).
+      const lead = {
+        name:    formData.get('name'),
+        email:   formData.get('email'),
+        company: formData.get('company') || '',
+        service: formData.get('service'),
       };
 
-      await addDoc(collection(db, 'submissions'), submission);
+      await addDoc(collection(db, 'submissions'), {
+        ...lead,
+        submittedAt: serverTimestamp(),
+        status:      'new',
+      });
 
       // Success: remove the input fields and show the completion message.
       contactForm.hidden = true;
@@ -168,22 +176,18 @@ if (contactForm) {
       const successEl = document.getElementById('contactSuccess');
       if (successEl) successEl.hidden = false;
 
-      // Best-effort notification — never let an email failure undo the confirmed save.
-      try {
-        await sendRequestEmails(submission);
-      } catch (notifyError) {
-        console.error('Notification failed:', notifyError?.message ?? 'unknown');
-      }
+      // Best-effort notification — self-contained (never throws); the submission is saved.
+      await sendRequestEmails(lead);
 
     } catch (error) {
-      console.error('Form submission failed:', error.code ?? 'unknown');
-      submitBtn.textContent = 'Something went wrong. Try again.';
+      console.error('Form submission failed:', error?.code ?? error?.message ?? error);
+      submitBtn.textContent = CONTACT_ERROR_MSG;
 
       setTimeout(() => {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         submitBtn.classList.remove('btn--loading');
-      }, 3000);
+      }, BUTTON_RESET_MS);
     }
   });
 }

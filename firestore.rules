@@ -46,7 +46,14 @@ service cloud.firestore {
       allow update: if isAdmin()
         && request.resource.data.diff(resource.data).affectedKeys()
              .hasOnly(['status', 'adminNotes', 'updatedAt'])
-        && request.resource.data.status in ['new', 'contacted', 'closed'];
+        && request.resource.data.status in ['new', 'contacted', 'closed']
+        // updatedAt must be the server timestamp — clients can't backdate it
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.updatedAt == request.time
+        // adminNotes, when present, must be a bounded string
+        && (!('adminNotes' in request.resource.data)
+            || (request.resource.data.adminNotes is string
+                && request.resource.data.adminNotes.size() <= 5000));
       allow delete: if false;
     }
 
