@@ -6,8 +6,11 @@ macOS `sips`. To swap any image for an updated photo, drop a new file at the
 same path with a similar aspect ratio — no code changes needed.
 
 ## Logo
-- `logo.png` — MQ Steel Corp mascot (husky in a welding helmet). Shown in the
-  navbar inside a white badge. Line-art on a white background.
+- `logo.png` — MQ Steel Corp mascot (husky in a welding helmet). Background
+  removed to transparency and recolored white (soft alpha), shown as a large
+  semi-transparent watermark on the right of the hero (carousel visible through
+  it). Regenerate from the source PNG with the PIL snippet if you need to tweak
+  color/opacity.
 
 ## Hero carousel (`assets/images/`) — 7 slides
 | File | Shows |
@@ -27,11 +30,13 @@ same path with a similar aspect ratio — no code changes needed.
 - `owner.jpg` — on-site worker shot standing in for the founder. **Not an actual
   portrait of the owner** — replace with a real headshot when available.
 
-## Portfolio gallery (`assets/images/projects/`) — 54 photos
-Every usable work photo from the set is displayed in the filterable gallery.
-- `structural-01.jpg` … `structural-36.jpg` — 36 structural photos
+## Portfolio gallery (`assets/images/projects/`) — 36 photos
+A curated selection (trimmed ~1/3 from the full set for pacing, keeping variety
+across every work type). Shown in the filterable gallery with a 3D
+scroll-reveal + hover-tilt (CSS transforms only; reduced-motion safe).
+- `structural-01.jpg` … `structural-24.jpg` — 24 structural photos
   (erection, framing, decking, columns, cranes, connections)
-- `architectural-01.jpg` … `architectural-18.jpg` — 18 architectural photos
+- `architectural-01.jpg` … `architectural-12.jpg` — 12 architectural photos
   (staircases, spiral stairs, railings, fire escapes, ornamental iron)
 
 Captions/alt text for each are in `index.html` (per `data-alt`).

@@ -1,15 +1,19 @@
 /*
- * Portfolio filter + accessible lightbox.
+ * Portfolio filter + accessible lightbox + 3D reveal/tilt.
  * Dependency-free, self-contained. Touches only #work / #lightbox elements —
  * never any element owned by main.js (nav, carousel, contact form).
+ * All motion is GPU-composited (transform/opacity) and respects reduced-motion.
  */
 (function () {
   'use strict';
 
+  const grid     = document.querySelector('.work__grid');
   const chips    = Array.from(document.querySelectorAll('.filter__chip'));
   const items    = Array.from(document.querySelectorAll('.work__item'));
   const lightbox = document.getElementById('lightbox');
   if (!items.length || !lightbox) return;
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const lbImg    = lightbox.querySelector('.lightbox__img');
   const btnClose = lightbox.querySelector('.lightbox__close');
@@ -26,10 +30,52 @@
         c.setAttribute('aria-pressed', String(active));
       });
       items.forEach((item) => {
-        item.hidden = !(filter === 'all' || item.dataset.category === filter);
+        const show = filter === 'all' || item.dataset.category === filter;
+        item.hidden = !show;
+        // Ensure a card filtered back into view is never left in the pre-reveal state.
+        if (show) item.classList.add('is-visible');
       });
     });
   });
+
+  /* ---------- 3D scroll reveal ---------- */
+  if (grid) {
+    grid.classList.add('js-reveal');
+    if (prefersReduced || !('IntersectionObserver' in window)) {
+      items.forEach((i) => i.classList.add('is-visible'));
+    } else {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+      items.forEach((i) => io.observe(i));
+    }
+  }
+
+  /* ---------- 3D hover tilt (fine-pointer devices only) ---------- */
+  const canTilt = !prefersReduced &&
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (canTilt) {
+    const MAX = 6; // degrees
+    items.forEach((item) => {
+      const btn = item.querySelector('.work__btn');
+      btn.addEventListener('pointermove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;   // -0.5 .. 0.5
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        btn.style.setProperty('--rx', (px * MAX * 2).toFixed(2) + 'deg');   // rotateY
+        btn.style.setProperty('--ry', (-py * MAX * 2).toFixed(2) + 'deg');  // rotateX
+      });
+      btn.addEventListener('pointerleave', () => {
+        btn.style.setProperty('--rx', '0deg');
+        btn.style.setProperty('--ry', '0deg');
+      });
+    });
+  }
 
   /* ---------- Lightbox ---------- */
   let current = -1;          // index into the currently-visible items
