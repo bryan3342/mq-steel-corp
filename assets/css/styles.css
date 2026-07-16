@@ -1017,16 +1017,24 @@ h1, h2, h3, h4, h5, h6 {
 .hero__logo {
   position: absolute;
   top: 50%;
-  right: 0;
+  right: clamp(1rem, 3vw, 4rem);
   transform: translateY(-50%);
-  height: 64vh;
-  max-height: 640px;
+  height: 62vh;
+  max-height: 560px;
   width: auto;
-  opacity: 0.5;
+  opacity: 1;
   z-index: 2;
   pointer-events: none;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.55));
   -webkit-user-select: none;
   user-select: none;
+}
+
+@media (max-width: 1279px) {
+  .hero__logo {
+    height: 46vh;
+    right: 0.5rem;
+  }
 }
 
 @media (max-width: 899px) {

@@ -6,11 +6,11 @@ macOS `sips`. To swap any image for an updated photo, drop a new file at the
 same path with a similar aspect ratio — no code changes needed.
 
 ## Logo
-- `logo.png` — MQ Steel Corp mascot (husky in a welding helmet). Background
-  removed to transparency and recolored white (soft alpha), shown as a large
-  semi-transparent watermark on the right of the hero (carousel visible through
-  it). Regenerate from the source PNG with the PIL snippet if you need to tweak
-  color/opacity.
+- `logo.png` — MQ Steel Corp mascot (husky in a welding helmet + cape).
+  Owner-provided, background-removed line art (source:
+  `mq_steel_logo-removebg-preview.png`). Shown large and fully opaque to the
+  right of the hero title, above the carousel so it never fades as slides change
+  (a drop-shadow keeps it legible over any slide). Hidden on small screens.
 
 ## Hero carousel (`assets/images/`) — 7 slides
 | File | Shows |
