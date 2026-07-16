@@ -857,6 +857,23 @@ h1, h2, h3, h4, h5, h6 {
   padding-inline: var(--space-2xl);
 }
 
+/* Hide the form once submitted (class beats .contact__form's display: grid) */
+.contact__form[hidden] {
+  display: none;
+}
+
+.contact__success {
+  max-width: 700px;
+  margin-inline: auto;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  color: var(--color-accent);
+  line-height: 1.4;
+  padding-block: var(--space-2xl);
+}
+
 /* Footer */
 .footer {
   background-color: var(--color-dark);

@@ -155,8 +155,12 @@ if (contactForm) {
 
       await addDoc(collection(db, 'submissions'), submission);
 
-      submitBtn.textContent = 'Message Sent!';
-      contactForm.reset();
+      // Success: remove the input fields and show the completion message.
+      contactForm.hidden = true;
+      const subtitle = contactForm.parentElement?.querySelector('.section__subtitle');
+      if (subtitle) subtitle.hidden = true;
+      const successEl = document.getElementById('contactSuccess');
+      if (successEl) successEl.hidden = false;
 
       // Best-effort notification — never let an email failure undo the confirmed save.
       try {
@@ -164,12 +168,6 @@ if (contactForm) {
       } catch (notifyError) {
         console.error('Notification failed:', notifyError?.message ?? 'unknown');
       }
-
-      setTimeout(() => {
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('btn--loading');
-      }, 3000);
 
     } catch (error) {
       console.error('Form submission failed:', error.code ?? 'unknown');
