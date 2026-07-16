@@ -9,39 +9,70 @@
  *   1. Firebase Console → Project settings → Service accounts → "Generate new private key".
  *      Save the file next to this script as `serviceAccountKey.json` (git-ignored).
  *   2. npm install            (installs firebase-admin from scripts/package.json)
- *   3. node provision-admin.mjs <email> <password>
+ *   3. node provision-admin.mjs <email>
+ *      → you're prompted for the password (hidden), OR set it via the ADMIN_PW env var.
+ *      The password is NOT an argument, so it never lands in shell history or `ps`.
  *
  * Examples:
- *   node provision-admin.mjs owner@mqsteelcorp.com 'a-strong-password'     # first admin
- *   node provision-admin.mjs teammate@mqsteelcorp.com 'their-password'     # add a teammate
- *   node provision-admin.mjs owner@mqsteelcorp.com 'new-password'          # reset a password
+ *   node provision-admin.mjs owner@mqsteelcorp.com               # hidden password prompt
+ *   ADMIN_PW='a-strong-password' node provision-admin.mjs teammate@mqsteelcorp.com
  *
  * To REMOVE an admin: delete their user in Firebase Console → Authentication, and delete
  * their document from the `admins` collection in Firestore.
  */
 import { readFileSync } from 'node:fs';
+import { createInterface } from 'node:readline';
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
-const [, , rawEmail, password] = process.argv;
-if (!rawEmail || !password) {
-  console.error('Usage: node provision-admin.mjs <email> <password>');
-  process.exit(1);
+const MIN_PASSWORD_LENGTH = 12;
+
+// Read a secret without echoing it to the terminal.
+function promptHidden(query) {
+  return new Promise((resolve) => {
+    const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: true });
+    let muted = false;
+    rl._writeToOutput = (str) => { if (!muted) rl.output.write(str); };
+    rl.question(query, (answer) => {
+      rl.output.write('\n');
+      rl.close();
+      resolve(answer);
+    });
+    muted = true; // mute AFTER the prompt is printed, so only the typed chars are hidden
+  });
 }
-if (password.length < 6) {
-  console.error('Password must be at least 6 characters.');
+
+const [, , rawEmail] = process.argv;
+if (!rawEmail) {
+  console.error('Usage: node provision-admin.mjs <email>   (password via ADMIN_PW env or hidden prompt)');
   process.exit(1);
 }
 const email = rawEmail.trim().toLowerCase();
 
-const serviceAccount = JSON.parse(
-  readFileSync(new URL('./serviceAccountKey.json', import.meta.url)),
-);
-initializeApp({ credential: cert(serviceAccount) });
+const password = process.env.ADMIN_PW || (await promptHidden(`Password for ${email}: `));
+if (!password || password.length < MIN_PASSWORD_LENGTH) {
+  console.error(`Password must be at least ${MIN_PASSWORD_LENGTH} characters.`);
+  process.exit(1);
+}
 
-const auth = getAuth();
-const db = getFirestore();
+// Load credentials + init the Admin SDK, with a friendly message if the key is missing.
+let auth;
+let db;
+try {
+  const serviceAccount = JSON.parse(
+    readFileSync(new URL('./serviceAccountKey.json', import.meta.url)),
+  );
+  initializeApp({ credential: cert(serviceAccount) });
+  auth = getAuth();
+  db = getFirestore();
+} catch (err) {
+  console.error(
+    'Could not load serviceAccountKey.json — generate a private key in Firebase Console → ' +
+    'Project settings → Service accounts and save it next to this script.\n' + (err.message ?? err),
+  );
+  process.exit(1);
+}
 
 try {
   let user;

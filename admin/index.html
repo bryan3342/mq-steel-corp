@@ -74,6 +74,18 @@
       </div>
     </section>
 
+    <!-- Signed in, but access couldn't be verified (App Check / network / rules) -->
+    <section id="error-view" class="centered" hidden>
+      <div class="card-lg">
+        <h1 class="card-lg__title">Can't verify access</h1>
+        <p class="card-lg__sub">We couldn't confirm your access just now. This is usually a network or App Check hiccup — not a permissions problem.</p>
+        <button type="button" class="btn btn--primary btn--block" id="error-retry">Try again</button>
+        <div class="card-lg__links">
+          <button type="button" class="link" data-signout>Sign out</button>
+        </div>
+      </div>
+    </section>
+
     <!-- Dashboard (Requests) -->
     <section id="app-view" class="app" hidden>
       <div class="toolbar">

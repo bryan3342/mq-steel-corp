@@ -49,6 +49,7 @@ const views = {
   signin:  el('signin-view'),
   verify:  el('verify-view'),
   denied:  el('denied-view'),
+  error:   el('error-view'),
   app:     el('app-view'),
 };
 
@@ -125,7 +126,8 @@ if (DEMO) {
 
 function wireAuthControls() {
   document.querySelectorAll('[data-signout]').forEach((b) =>
-    b.addEventListener('click', () => signOut(auth)));
+    b.addEventListener('click', () =>
+      signOut(auth).catch((err) => console.error('sign-out:', err?.code ?? 'unknown'))));
 
   el('signin-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -161,6 +163,10 @@ function wireAuthControls() {
     try { await sendEmailVerification(currentUser); toast('Verification email sent.'); }
     catch (err) { console.error('resend:', err?.code ?? 'unknown'); toast('Could not send just now — try again shortly.', true); }
   });
+
+  el('error-retry').addEventListener('click', () => {
+    if (auth.currentUser) evaluateAccess(auth.currentUser);
+  });
 }
 
 function setFormBusy(busy) {
@@ -173,14 +179,21 @@ function setFormBusy(busy) {
 async function evaluateAccess(user) {
   showView('loading');
 
-  let allowlisted = false;
+  // A read that THROWS (App Check / network / rules) is not the same as "not on the
+  // team". Surface those as a retryable error instead of a misleading access denial.
+  let snap;
   try {
-    allowlisted = (await getDoc(doc(db, 'admins', normalizeEmail(user.email)))).exists();
+    snap = await getDoc(doc(db, 'admins', normalizeEmail(user.email)));
   } catch (err) {
     console.error('admin-check:', err?.code ?? 'unknown');
+    showView('error');
+    return;
   }
 
-  if (!allowlisted) {
+  // Auth may have changed while awaiting — don't route a stale/superseded user.
+  if (auth.currentUser !== user) return;
+
+  if (!snap.exists()) {
     el('denied-email').textContent = user.email ?? '';
     showView('denied');
     return;
@@ -213,6 +226,7 @@ function startDemo() {
 
 // ─── Requests (loaded only after the admin check passes) ─────────────────────
 function subscribeSubmissions() {
+  if (unsubscribeSubmissions) { unsubscribeSubmissions(); unsubscribeSubmissions = null; }
   const q = query(collection(db, 'submissions'), orderBy('submittedAt', 'desc'));
   unsubscribeSubmissions = onSnapshot(
     q,

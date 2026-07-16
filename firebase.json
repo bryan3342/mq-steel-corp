@@ -14,12 +14,13 @@
         ".firebaserc",
         "**/.*",
         "**/node_modules/**",
+        "**/serviceAccountKey.json",
         "functions/**",
         "admin/**",
-        "CLAUDE.md",
+        "docs/**",
         "specs/**",
         "audit/**",
-        "*.md"
+        "**/*.md"
       ],
       "headers": [
         {
@@ -78,8 +79,9 @@
       "ignore": [
         "**/.*",
         "**/node_modules/**",
+        "**/serviceAccountKey.json",
         "scripts/**",
-        "*.md"
+        "**/*.md"
       ],
       "headers": [
         {
