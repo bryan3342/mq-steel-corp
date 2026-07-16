@@ -175,11 +175,26 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
   font-family: var(--font-heading);
   font-size: var(--fs-xl);
   font-weight: var(--fw-bold);
   color: var(--color-white);
   letter-spacing: 1px;
+}
+
+.navbar__logo-icon {
+  height: 42px;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+.navbar__logo-word {
+  white-space: nowrap;
 }
 
 .navbar__logo-mq {
@@ -1010,36 +1025,6 @@ h1, h2, h3, h4, h5, h6 {
 
   .hero__title {
     font-size: 11rem;
-  }
-}
-
-/* Hero logo watermark (background-removed, semi-transparent over the carousel) */
-.hero__logo {
-  position: absolute;
-  top: 50%;
-  right: clamp(1rem, 3vw, 4rem);
-  transform: translateY(-50%);
-  height: 62vh;
-  max-height: 560px;
-  width: auto;
-  opacity: 1;
-  z-index: 2;
-  pointer-events: none;
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.55));
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-@media (max-width: 1279px) {
-  .hero__logo {
-    height: 46vh;
-    right: 0.5rem;
-  }
-}
-
-@media (max-width: 899px) {
-  .hero__logo {
-    display: none;
   }
 }
 

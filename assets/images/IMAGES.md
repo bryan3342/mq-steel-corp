@@ -8,9 +8,11 @@ same path with a similar aspect ratio — no code changes needed.
 ## Logo
 - `logo.png` — MQ Steel Corp mascot (husky in a welding helmet + cape).
   Owner-provided, background-removed line art (source:
-  `mq_steel_logo-removebg-preview.png`). Shown large and fully opaque to the
-  right of the hero title, above the carousel so it never fades as slides change
-  (a drop-shadow keeps it legible over any slide). Hidden on small screens.
+  `mq_steel_logo-removebg-preview.png`). Used as the **navbar icon**, left of the
+  "MQ Steel Corp" wordmark.
+- `favicon.png` — the same mascot on a navy square (so it's visible on light and
+  dark browser tabs); wired via `<link rel="icon">` + `apple-touch-icon`.
+  Regenerate from `logo.png` with the PIL snippet if you change the logo.
 
 ## Hero carousel (`assets/images/`) — 7 slides
 | File | Shows |
