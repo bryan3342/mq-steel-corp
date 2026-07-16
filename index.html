@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MQ Steel Corp | Structural Steel Fabrication & Erection</title>
-  <meta name="description" content="MQ Steel Corp specializes in structural steel fabrication, erection, welding, and architectural steel. View our work in welding, structural steel, and architectural metalwork.">
+  <meta name="description" content="MQ Steel Corp specializes in structural steel fabrication, erection, welding, and architectural steel. View our work in structural and architectural metalwork.">
 
   <meta name="robots" content="index, follow">
 
@@ -21,7 +21,10 @@
 
   <nav class="navbar" id="navbar">
     <div class="container navbar__inner">
-      <a href="#home" class="navbar__logo"><span>MQ</span> Steel Corp</a>
+      <a href="#home" class="navbar__logo">
+        <img class="navbar__logo-img" src="assets/images/logo.png" alt="MQ Steel Corp logo" width="360" height="480">
+        <span class="navbar__logo-word"><span class="navbar__logo-mq">MQ</span> Steel Corp</span>
+      </a>
       <div class="navbar__links">
         <a href="#home">Home</a>
         <a href="#work">Our Work</a>
@@ -61,6 +64,12 @@
           <li class="splide__slide">
             <img class="hero__img" src="assets/images/hero-05.jpg" alt="Multi-level structural steel frame erection" width="1600" height="1200">
           </li>
+          <li class="splide__slide">
+            <img class="hero__img" src="assets/images/projects/welding-01.jpg" alt="Welding a structural steel beam" width="1050" height="1400">
+          </li>
+          <li class="splide__slide">
+            <img class="hero__img" src="assets/images/projects/welding-02.jpg" alt="Overhead welding on scaffold" width="1050" height="1400">
+          </li>
         </ul>
       </div>
     </div>
@@ -71,7 +80,7 @@
       <p class="hero__tagline">Welding Precision &amp; Structural Excellence</p>
       <div class="hero__ctas">
         <a href="#work" class="btn btn--primary">View Our Work</a>
-        <a href="#contact" class="btn btn--outline">Get in Touch</a>
+        <a href="#contact" class="btn btn--outline">Contact Us</a>
       </div>
     </div>
   </section>
@@ -79,7 +88,6 @@
   <section class="section company" id="about-company">
     <div class="container company__grid">
       <div class="company__col">
-        <p class="eyebrow" data-num="01">Who We Are</p>
         <h2 class="section__title company__title">Building America's infrastructure with precision and integrity</h2>
         <div class="company__text">
           <p>MQ Steel Corp is a leading structural steel fabrication and erection company dedicated to delivering exceptional quality on every project. With over 15 years of experience in the industry, we have built a reputation for reliability, precision, and a commitment to safety that is second to none.</p>
@@ -88,7 +96,7 @@
         </div>
       </div>
       <div class="company__media blueprint">
-        <img src="assets/images/projects/structural-07.jpg" alt="MQ Steel Corp overhead structural steel beam framing" loading="lazy" width="1400" height="1050">
+        <img src="assets/images/projects/structural-14.jpg" alt="MQ Steel Corp overhead structural steel beam framing" loading="lazy" width="1400" height="1050">
       </div>
     </div>
     <div class="company__stats-band band">
@@ -111,21 +119,25 @@
 
   <section class="section work" id="work">
     <div class="container">
-      <p class="eyebrow" data-num="02">Our Work</p>
       <h2 class="section__title">Steel that stands the test of time</h2>
-      <p class="section__subtitle">A selection of our welding, structural, and architectural steel projects.</p>
+      <p class="section__subtitle">A selection of our structural and architectural steel projects.</p>
 
       <div class="filter" role="group" aria-label="Filter projects by type">
         <button class="filter__chip filter__chip--active" data-filter="all" aria-pressed="true">All</button>
-        <button class="filter__chip" data-filter="welding" aria-pressed="false">Welding</button>
         <button class="filter__chip" data-filter="structural" aria-pressed="false">Structural</button>
         <button class="filter__chip" data-filter="architectural" aria-pressed="false">Architectural</button>
       </div>
 
       <ul class="work__grid">
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-01.jpg" data-alt="Steel frame erection">
-            <img src="assets/images/projects/structural-01.jpg" alt="Steel frame erection" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-01.jpg" data-alt="Structural steel frame between buildings">
+            <img src="assets/images/projects/structural-01.jpg" alt="Structural steel frame between buildings" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-02.jpg" data-alt="Steel frame erection">
+            <img src="assets/images/projects/structural-02.jpg" alt="Steel frame erection" loading="lazy">
             <span class="work__tag">Structural</span>
           </button>
         </li>
@@ -135,154 +147,310 @@
             <span class="work__tag">Architectural</span>
           </button>
         </li>
-        <li class="work__item" data-category="welding">
-          <button class="work__btn" type="button" data-full="assets/images/projects/welding-01.jpg" data-alt="Welding a structural steel beam">
-            <img src="assets/images/projects/welding-01.jpg" alt="Welding a structural steel beam" loading="lazy">
-            <span class="work__tag">Welding</span>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-03.jpg" data-alt="Metal deck floor framing">
+            <img src="assets/images/projects/structural-03.jpg" alt="Metal deck floor framing" loading="lazy">
+            <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-02.jpg" data-alt="Metal deck floor framing">
-            <img src="assets/images/projects/structural-02.jpg" alt="Metal deck floor framing" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-04.jpg" data-alt="Multi-level steel frame and decking">
+            <img src="assets/images/projects/structural-04.jpg" alt="Multi-level steel frame and decking" loading="lazy">
             <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="architectural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-02.jpg" data-alt="Galvanized spiral staircase">
-            <img src="assets/images/projects/architectural-02.jpg" alt="Galvanized spiral staircase" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-02.jpg" data-alt="Steel canopy frame under construction">
+            <img src="assets/images/projects/architectural-02.jpg" alt="Steel canopy frame under construction" loading="lazy">
             <span class="work__tag">Architectural</span>
           </button>
         </li>
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-03.jpg" data-alt="Interior steel beam framing">
-            <img src="assets/images/projects/structural-03.jpg" alt="Interior steel beam framing" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-05.jpg" data-alt="Steel frame between brick walls">
+            <img src="assets/images/projects/structural-05.jpg" alt="Steel frame between brick walls" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-06.jpg" data-alt="Interior steel beam framing">
+            <img src="assets/images/projects/structural-06.jpg" alt="Interior steel beam framing" loading="lazy">
             <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="architectural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-03.jpg" data-alt="Finished black steel staircase">
-            <img src="assets/images/projects/architectural-03.jpg" alt="Finished black steel staircase" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-03.jpg" data-alt="Fabricated steel exterior steps">
+            <img src="assets/images/projects/architectural-03.jpg" alt="Fabricated steel exterior steps" loading="lazy">
             <span class="work__tag">Architectural</span>
           </button>
         </li>
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-04.jpg" data-alt="Crane hoisting a steel beam">
-            <img src="assets/images/projects/structural-04.jpg" alt="Crane hoisting a steel beam" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-07.jpg" data-alt="Steel building under construction">
+            <img src="assets/images/projects/structural-07.jpg" alt="Steel building under construction" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-08.jpg" data-alt="Crane hoisting a steel beam">
+            <img src="assets/images/projects/structural-08.jpg" alt="Crane hoisting a steel beam" loading="lazy">
             <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="architectural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-04.jpg" data-alt="Primed steel spiral staircase">
-            <img src="assets/images/projects/architectural-04.jpg" alt="Primed steel spiral staircase" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-04.jpg" data-alt="Galvanized exterior spiral staircase">
+            <img src="assets/images/projects/architectural-04.jpg" alt="Galvanized exterior spiral staircase" loading="lazy">
             <span class="work__tag">Architectural</span>
           </button>
         </li>
-        <li class="work__item" data-category="welding">
-          <button class="work__btn" type="button" data-full="assets/images/projects/welding-02.jpg" data-alt="Overhead welding on scaffold">
-            <img src="assets/images/projects/welding-02.jpg" alt="Overhead welding on scaffold" loading="lazy">
-            <span class="work__tag">Welding</span>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-09.jpg" data-alt="Braced steel frame">
+            <img src="assets/images/projects/structural-09.jpg" alt="Braced steel frame" loading="lazy">
+            <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-05.jpg" data-alt="Braced steel frame">
-            <img src="assets/images/projects/structural-05.jpg" alt="Braced steel frame" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-10.jpg" data-alt="Bolted steel connection detail">
+            <img src="assets/images/projects/structural-10.jpg" alt="Bolted steel connection detail" loading="lazy">
             <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="architectural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-05.jpg" data-alt="Ornamental iron balconies">
-            <img src="assets/images/projects/architectural-05.jpg" alt="Ornamental iron balconies" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-05.jpg" data-alt="Fabricated steel switchback staircase">
+            <img src="assets/images/projects/architectural-05.jpg" alt="Fabricated steel switchback staircase" loading="lazy">
             <span class="work__tag">Architectural</span>
           </button>
         </li>
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-06.jpg" data-alt="Bolted steel connection detail">
-            <img src="assets/images/projects/structural-06.jpg" alt="Bolted steel connection detail" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-11.jpg" data-alt="Steel floor framing over foundation">
+            <img src="assets/images/projects/structural-11.jpg" alt="Steel floor framing over foundation" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-12.jpg" data-alt="Steel erection with crew on site">
+            <img src="assets/images/projects/structural-12.jpg" alt="Steel erection with crew on site" loading="lazy">
             <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="architectural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-06.jpg" data-alt="Steel staircase with glass railings">
-            <img src="assets/images/projects/architectural-06.jpg" alt="Steel staircase with glass railings" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-06.jpg" data-alt="Installing steel staircase stringers">
+            <img src="assets/images/projects/architectural-06.jpg" alt="Installing steel staircase stringers" loading="lazy">
             <span class="work__tag">Architectural</span>
           </button>
         </li>
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-07.jpg" data-alt="Overhead steel beam framing">
-            <img src="assets/images/projects/structural-07.jpg" alt="Overhead steel beam framing" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-13.jpg" data-alt="Steel column framing">
+            <img src="assets/images/projects/structural-13.jpg" alt="Steel column framing" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-14.jpg" data-alt="Overhead steel beam framing">
+            <img src="assets/images/projects/structural-14.jpg" alt="Overhead steel beam framing" loading="lazy">
             <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="architectural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-07.jpg" data-alt="Steel staircase with cable railing">
-            <img src="assets/images/projects/architectural-07.jpg" alt="Steel staircase with cable railing" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-07.jpg" data-alt="Finished black steel staircase">
+            <img src="assets/images/projects/architectural-07.jpg" alt="Finished black steel staircase" loading="lazy">
             <span class="work__tag">Architectural</span>
           </button>
         </li>
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-08.jpg" data-alt="Structural steel canopy framing">
-            <img src="assets/images/projects/structural-08.jpg" alt="Structural steel canopy framing" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-15.jpg" data-alt="Structural steel canopy framing">
+            <img src="assets/images/projects/structural-15.jpg" alt="Structural steel canopy framing" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-16.jpg" data-alt="Structural steel floor framing">
+            <img src="assets/images/projects/structural-16.jpg" alt="Structural steel floor framing" loading="lazy">
             <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="architectural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-08.jpg" data-alt="Multi-level steel and glass railings">
-            <img src="assets/images/projects/architectural-08.jpg" alt="Multi-level steel and glass railings" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-08.jpg" data-alt="Steel staircase and handrail install">
+            <img src="assets/images/projects/architectural-08.jpg" alt="Steel staircase and handrail install" loading="lazy">
             <span class="work__tag">Architectural</span>
           </button>
         </li>
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-09.jpg" data-alt="Structural steel column">
-            <img src="assets/images/projects/structural-09.jpg" alt="Structural steel column" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-17.jpg" data-alt="Structural steel column against sky">
+            <img src="assets/images/projects/structural-17.jpg" alt="Structural steel column against sky" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-18.jpg" data-alt="Red structural steel frame erection">
+            <img src="assets/images/projects/structural-18.jpg" alt="Red structural steel frame erection" loading="lazy">
             <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="architectural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-09.jpg" data-alt="Steel staircase with cable railings">
-            <img src="assets/images/projects/architectural-09.jpg" alt="Steel staircase with cable railings" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-09.jpg" data-alt="Primed steel spiral staircase">
+            <img src="assets/images/projects/architectural-09.jpg" alt="Primed steel spiral staircase" loading="lazy">
             <span class="work__tag">Architectural</span>
           </button>
         </li>
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-10.jpg" data-alt="Cross-braced steel frame">
-            <img src="assets/images/projects/structural-10.jpg" alt="Cross-braced steel frame" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-19.jpg" data-alt="Steel building skeleton erection">
+            <img src="assets/images/projects/structural-19.jpg" alt="Steel building skeleton erection" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-20.jpg" data-alt="Steel frame with cross-bracing">
+            <img src="assets/images/projects/structural-20.jpg" alt="Steel frame with cross-bracing" loading="lazy">
             <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="architectural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-10.jpg" data-alt="Fabricated switchback staircase">
-            <img src="assets/images/projects/architectural-10.jpg" alt="Fabricated switchback staircase" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-10.jpg" data-alt="Spiral staircase, overhead view">
+            <img src="assets/images/projects/architectural-10.jpg" alt="Spiral staircase, overhead view" loading="lazy">
             <span class="work__tag">Architectural</span>
           </button>
         </li>
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-11.jpg" data-alt="Steel portal frame erection">
-            <img src="assets/images/projects/structural-11.jpg" alt="Steel portal frame erection" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-21.jpg" data-alt="Steel floor beam grid framing">
+            <img src="assets/images/projects/structural-21.jpg" alt="Steel floor beam grid framing" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-22.jpg" data-alt="Steel portal frame erection">
+            <img src="assets/images/projects/structural-22.jpg" alt="Steel portal frame erection" loading="lazy">
             <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="architectural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-11.jpg" data-alt="Exterior steel fire escape">
-            <img src="assets/images/projects/architectural-11.jpg" alt="Exterior steel fire escape" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-11.jpg" data-alt="Ornamental iron fire-escape balconies">
+            <img src="assets/images/projects/architectural-11.jpg" alt="Ornamental iron fire-escape balconies" loading="lazy">
             <span class="work__tag">Architectural</span>
           </button>
         </li>
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-12.jpg" data-alt="Ironworkers hoisting a beam">
-            <img src="assets/images/projects/structural-12.jpg" alt="Ironworkers hoisting a beam" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-23.jpg" data-alt="Multi-level steel frame erection">
+            <img src="assets/images/projects/structural-23.jpg" alt="Multi-level steel frame erection" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-24.jpg" data-alt="Steel columns and floor decking">
+            <img src="assets/images/projects/structural-24.jpg" alt="Steel columns and floor decking" loading="lazy">
             <span class="work__tag">Structural</span>
           </button>
         </li>
         <li class="work__item" data-category="architectural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-12.jpg" data-alt="Black steel stairwell handrail">
-            <img src="assets/images/projects/architectural-12.jpg" alt="Black steel stairwell handrail" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-12.jpg" data-alt="Steel staircase with glass railings">
+            <img src="assets/images/projects/architectural-12.jpg" alt="Steel staircase with glass railings" loading="lazy">
             <span class="work__tag">Architectural</span>
           </button>
         </li>
         <li class="work__item" data-category="structural">
-          <button class="work__btn" type="button" data-full="assets/images/projects/structural-13.jpg" data-alt="Staging structural steel beams">
-            <img src="assets/images/projects/structural-13.jpg" alt="Staging structural steel beams" loading="lazy">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-25.jpg" data-alt="Steel platform framing">
+            <img src="assets/images/projects/structural-25.jpg" alt="Steel platform framing" loading="lazy">
             <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-26.jpg" data-alt="Steel column erection with crane">
+            <img src="assets/images/projects/structural-26.jpg" alt="Steel column erection with crane" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-13.jpg" data-alt="Steel staircase with cable railing">
+            <img src="assets/images/projects/architectural-13.jpg" alt="Steel staircase with cable railing" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-27.jpg" data-alt="Ironworkers hoisting a steel beam">
+            <img src="assets/images/projects/structural-27.jpg" alt="Ironworkers hoisting a steel beam" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-28.jpg" data-alt="Rooftop steel canopy over skyline">
+            <img src="assets/images/projects/structural-28.jpg" alt="Rooftop steel canopy over skyline" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-14.jpg" data-alt="Exterior steel fire escape">
+            <img src="assets/images/projects/architectural-14.jpg" alt="Exterior steel fire escape" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-29.jpg" data-alt="Steel roof beams and decking">
+            <img src="assets/images/projects/structural-29.jpg" alt="Steel roof beams and decking" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-30.jpg" data-alt="Steel floor framing installation">
+            <img src="assets/images/projects/structural-30.jpg" alt="Steel floor framing installation" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-15.jpg" data-alt="Black steel stairwell handrail">
+            <img src="assets/images/projects/architectural-15.jpg" alt="Black steel stairwell handrail" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-31.jpg" data-alt="Steel columns against brick building">
+            <img src="assets/images/projects/structural-31.jpg" alt="Steel columns against brick building" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-32.jpg" data-alt="Metal deck installation on steel">
+            <img src="assets/images/projects/structural-32.jpg" alt="Metal deck installation on steel" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-16.jpg" data-alt="Multi-level interior steel railings">
+            <img src="assets/images/projects/architectural-16.jpg" alt="Multi-level interior steel railings" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-33.jpg" data-alt="Fabricated steel column and beam">
+            <img src="assets/images/projects/structural-33.jpg" alt="Fabricated steel column and beam" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-34.jpg" data-alt="Foundation-level steel framing">
+            <img src="assets/images/projects/structural-34.jpg" alt="Foundation-level steel framing" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-17.jpg" data-alt="Steel staircase with cable railings">
+            <img src="assets/images/projects/architectural-17.jpg" alt="Steel staircase with cable railings" loading="lazy">
+            <span class="work__tag">Architectural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-35.jpg" data-alt="Steel building frame under construction">
+            <img src="assets/images/projects/structural-35.jpg" alt="Steel building frame under construction" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="structural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/structural-36.jpg" data-alt="Structural steel beams at jobsite">
+            <img src="assets/images/projects/structural-36.jpg" alt="Structural steel beams at jobsite" loading="lazy">
+            <span class="work__tag">Structural</span>
+          </button>
+        </li>
+        <li class="work__item" data-category="architectural">
+          <button class="work__btn" type="button" data-full="assets/images/projects/architectural-18.jpg" data-alt="Black steel guardrail in stairwell">
+            <img src="assets/images/projects/architectural-18.jpg" alt="Black steel guardrail in stairwell" loading="lazy">
+            <span class="work__tag">Architectural</span>
           </button>
         </li>
       </ul>
@@ -298,7 +466,6 @@
 
   <section class="section about" id="about">
     <div class="container">
-      <p class="eyebrow" data-num="03">Leadership</p>
       <h2 class="section__title">Meet the Owner</h2>
       <p class="section__subtitle">The leadership behind MQ Steel Corp</p>
       <div class="about__grid">
@@ -317,8 +484,7 @@
 
   <section class="section contact" id="contact">
     <div class="container">
-      <p class="eyebrow" data-num="04">Contact</p>
-      <h2 class="section__title">Get in Touch</h2>
+      <h2 class="section__title">Contact Us</h2>
       <p class="section__subtitle">Ready to start your next project? Tell us about it.</p>
       <form class="contact__form" action="#" method="POST" id="contactForm">
         <div class="form-group">

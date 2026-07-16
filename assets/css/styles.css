@@ -175,6 +175,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
   font-family: var(--font-heading);
   font-size: var(--fs-xl);
   font-weight: var(--fw-bold);
@@ -182,7 +185,21 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 1px;
 }
 
-.navbar__logo span {
+.navbar__logo-img {
+  height: 48px;
+  width: auto;
+  display: block;
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+.navbar__logo-word {
+  white-space: nowrap;
+}
+
+.navbar__logo-mq {
   color: var(--color-accent);
 }
 
