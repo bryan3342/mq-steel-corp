@@ -5,14 +5,14 @@ All photos are **real MQ Steel Corp project photos** supplied by the owner
 macOS `sips`. To swap any image for an updated photo, drop a new file at the
 same path with a similar aspect ratio — no code changes needed.
 
-## Logo
-- `logo.png` — MQ Steel Corp mascot (husky in a welding helmet + cape).
-  Owner-provided, background-removed line art (source:
-  `mq_steel_logo-removebg-preview.png`). Used as the **navbar icon**, left of the
-  "MQ Steel Corp" wordmark.
-- `favicon.png` — the same mascot on a navy square (so it's visible on light and
-  dark browser tabs); wired via `<link rel="icon">` + `apple-touch-icon`.
-  Regenerate from `logo.png` with the PIL snippet if you change the logo.
+## Logo / favicon
+- `favicon.png` — MQ Steel Corp mascot (husky in a welding helmet + cape) on a
+  navy square. Used **only** as the browser-tab icon (`<link rel="icon">` +
+  `apple-touch-icon`); visible on light and dark tabs. The mascot does not appear
+  anywhere on the page itself.
+- `logo.png` — the transparent source cutout (owner-provided
+  `mq_steel_logo-removebg-preview.png`), kept only to regenerate `favicon.png`
+  via the PIL snippet. Not referenced by the site.
 
 ## Hero carousel (`assets/images/`) — 7 slides
 | File | Shows |
