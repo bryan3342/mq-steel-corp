@@ -26,12 +26,16 @@ The public site and this admin portal are two Hosting **targets** in the repo's
 
 - **Overview dashboard** — KPIs computed live from the submissions (no tracking, no
   extra data source): percent **handled** (contacted or closed) with an open count, a
-  **total requests** count with a status-breakdown doughnut + legend, and a **requests
-  over time** trend with a Daily / Weekly / Monthly toggle, plus a **top-companies**
-  ranking.
-- **Requests** — review every submission live, search/filter by status (All / New /
-  Contacted / Closed), set status, add internal notes, and click an email to reply. A
-  live snapshot arriving mid-edit won't wipe a half-typed note.
+  **total requests** count with a status-breakdown doughnut + legend, a **requests
+  over time** trend with a Daily / Weekly / Monthly toggle, a **submission cadence**
+  chart (requests by day of week), and a **top-companies** ranking.
+- **Requests** — a scannable data table (Requester / Company / Service / Status /
+  Submitted); click a row to expand its full message and manage it (status + internal
+  notes). Search/filter by status (All / New / Contacted / Closed). A live snapshot
+  arriving mid-edit won't wipe a half-typed note.
+- **Look & feel** — a **light / dark** theme toggle (bottom-right; remembered per
+  browser via `localStorage`, defaults to the OS preference) and a **collapsible
+  sidebar** (also remembered). Both honor `prefers-reduced-motion`.
 
 ## Managing admins (IT, on the terminal)
 
@@ -94,9 +98,12 @@ appear on the deployed site. Status/notes are interactive but nothing is saved.
 
 - `index.html` — sign-in / verify / denied views + the analytics dashboard (sidebar,
   KPI cards, charts, requests table). Loads Chart.js from the CDN (see below).
+- `assets/js/theme-boot.js` — tiny render-blocking script in `<head>` that sets the
+  light/dark theme before first paint (no flash). Must be a **same-origin file**, not
+  inline, because the admin CSP has no `'unsafe-inline'` on `script-src`.
 - `assets/js/firebase-config.js` — Firebase init (same project) + Auth + App Check.
 - `assets/js/app.js` — email/password sign-in, live submissions, `computeMetrics()`,
-  Chart.js charts, status/notes.
+  Chart.js charts (theme-aware), requests table, theme + sidebar toggles, status/notes.
 - `assets/css/styles.css` — theme tokens + dashboard styling (KPI cards, charts, table).
 - `scripts/provision-admin.mjs` — terminal tool IT uses to add admins / reset passwords.
 
