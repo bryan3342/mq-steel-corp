@@ -108,6 +108,10 @@
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             <span>Requests</span>
           </button>
+          <button type="button" class="navlink" data-view="assistant">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>Assistant</span>
+          </button>
         </nav>
       </aside>
 
@@ -205,6 +209,16 @@
           </section>
         </div>
 
+        <!-- Assistant chat panel -->
+        <section id="assistant-panel" class="assistant" hidden>
+          <div id="assistant-log" class="assistant__log" aria-live="polite"></div>
+          <form id="assistant-form" class="assistant__form">
+            <input id="assistant-input" type="text" autocomplete="off"
+                   placeholder="Ask about your requests…" maxlength="500" required>
+            <button class="btn" type="submit">Ask</button>
+          </form>
+        </section>
+
       </div>
 
       <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch color theme" aria-pressed="false" title="Toggle light / dark">
@@ -219,5 +233,6 @@
 
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
   <script type="module" src="assets/js/app.js"></script>
+  <script type="module" src="assets/js/copilot.js"></script>
 </body>
 </html>

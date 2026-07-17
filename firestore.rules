@@ -95,6 +95,13 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    match /companyMemory/{id} {
+      allow read: if isAdmin();
+      allow create, update: if isAdmin()
+        && request.resource.data.type in ['fact', 'insight', 'pattern', 'request'];
+      allow delete: if isAdmin();
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
