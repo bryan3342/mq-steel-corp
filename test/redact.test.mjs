@@ -23,3 +23,37 @@ test('service text is scrubbed but preserved', () => {
   assert.ok(r.service.includes('stairs'));
   assert.ok(!r.service.includes('x@y.com'));
 });
+
+test('redacts every realistic phone format', () => {
+  const cases = [
+    '(212) 555-0199',
+    '212-555-0199',
+    '212.555.0199',
+    '212 555 0199',
+    '+1 212 555 0199',
+    '555-0199',
+    '2125550199',
+  ];
+  for (const raw of cases) {
+    const s = scrubText(`Call me at ${raw} about the beams.`);
+    assert.ok(!s.includes(raw), `expected "${raw}" to be redacted`);
+    assert.ok(s.includes('[phone removed]'), `expected marker for "${raw}"`);
+    assert.ok(s.includes('beams'), `expected ordinary text preserved for "${raw}"`);
+  }
+});
+
+test('redacts email with a space before the @', () => {
+  const s = scrubText('Reach me at bob @acme.com about the stairs.');
+  assert.ok(!s.includes('bob @acme.com'));
+  assert.ok(s.includes('[email removed]'));
+  assert.ok(s.includes('stairs'));
+});
+
+test('redact(null) returns the same shape as redact({})', () => {
+  const r = redact(null);
+  assert.deepEqual(r, redact({}));
+  assert.equal(r.company, '');
+  assert.equal(r.service, '');
+  assert.equal(r.status, 'new');
+  assert.equal(r.submittedAt, null);
+});
