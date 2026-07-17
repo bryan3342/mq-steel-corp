@@ -1,6 +1,6 @@
 import { db } from './firebase-config.js';
 import {
-  collection, getDocs, query, where, doc, setDoc, addDoc, serverTimestamp,
+  collection, getDocs, doc, setDoc, addDoc, serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
 import { redact } from './redact.js';
 
@@ -14,7 +14,7 @@ export async function loadMemory() {
 }
 
 // Idempotent: one redacted `request` doc per submission (id = req_<submissionId>).
-export async function upsertRequestEntries(subs, existingRequests) {
+export async function upsertRequestEntries(subs, existingRequests = []) {
   const have = new Set(existingRequests.map((r) => r.refId));
   const todo = subs.filter((s) => s.id && !have.has(s.id));
   for (const s of todo) {
