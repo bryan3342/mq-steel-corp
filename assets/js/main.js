@@ -1,6 +1,7 @@
 import { db } from './firebase-config.js';
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 import { EMAILJS } from './email-config.js';
+import { trackVisit } from './analytics.js';
 
 /* Mobile Menu */
 const hamburger  = document.getElementById('hamburger');
@@ -191,3 +192,7 @@ if (contactForm) {
     }
   });
 }
+
+/* Anonymous, cookieless visit count — deferred to idle so it never competes with the
+   page or the contact form. Self-contained + fire-and-forget (see analytics.js). */
+(window.requestIdleCallback || ((cb) => setTimeout(cb, 1)))(() => trackVisit());

@@ -29,6 +29,7 @@
   --chart-ink:    var(--ink-soft);
   --donut-border: var(--surface);
   --trend-fill:   rgba(217, 119, 6, .12);
+  --visits-fill:  rgba(37, 99, 235, .12);
 
   /* Motion */
   --dur-fast: 120ms;  --dur-med: 200ms;  --dur-slow: 300ms;
@@ -58,6 +59,7 @@
 
   --chart-grid: #2c3d59;
   --trend-fill: rgba(245, 158, 11, .18);
+  --visits-fill: rgba(59, 130, 246, .18);
   --shadow:     0 1px 3px rgba(0, 0, 0, .45), 0 8px 24px rgba(0, 0, 0, .4);
 }
 
@@ -341,9 +343,6 @@ html, body {
 }
 .seg__btn.is-active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(15, 26, 43, .1); }
 :root[data-theme="dark"] .seg__btn.is-active { box-shadow: 0 0 0 1px var(--line); }
-
-/* Submission cadence */
-.cadence { position: relative; height: 200px; }
 
 /* Table + ranking grid */
 .dash-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 1rem; align-items: start; }

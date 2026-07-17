@@ -4,7 +4,8 @@ import {
   setPersistence, browserSessionPersistence,
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 import {
-  collection, query, orderBy, onSnapshot, doc, getDoc, updateDoc, serverTimestamp,
+  collection, query, orderBy, onSnapshot, doc, getDoc, getDocs, where, documentId,
+  updateDoc, serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const STATUSES = ['new', 'contacted', 'closed'];
@@ -62,6 +63,10 @@ let statusFilter = 'all';
 let granularity = 'daily';
 const charts = {};
 let latestMetrics = null;
+let analyticsCache = [];              // [{ date: Date, views, sessions }]
+let latestVisitorMetrics = null;
+// Business-tz day id — must match analytics.js so visit buckets line up.
+const dayId = (date) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York' }).format(date);
 
 // ─── UI helpers: motion, theme, sidebar ──────────────────────────────────────
 const REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -265,6 +270,7 @@ async function evaluateAccess(user) {
 
   showView('app');
   subscribeSubmissions();
+  loadVisitorAnalytics();
 }
 
 function startDemo() {
@@ -277,6 +283,7 @@ function startDemo() {
     b.addEventListener('click', () => { location.search = ''; }));
 
   submissionsCache = DEMO_SUBMISSIONS.map((s) => ({ ...s }));
+  analyticsCache = buildDemoAnalytics();
   showView('app');
   renderDashboard();
 }
@@ -298,17 +305,51 @@ function subscribeSubmissions() {
   );
 }
 
+// Visitor analytics: a one-shot range read of the last ~365 day-ids — NOT a live
+// subscription (analytics is periodic, not live-critical, and onSnapshot would stream
+// every site hit into the tab). Range on the document id needs no composite index.
+async function loadVisitorAnalytics() {
+  try {
+    const start = new Date(); start.setDate(start.getDate() - 365);
+    const snap = await getDocs(query(collection(db, 'analytics_daily'), where(documentId(), '>=', dayId(start))));
+    analyticsCache = snap.docs.map((d) => {
+      const v = d.data();
+      return { date: new Date(`${d.id}T00:00:00`), views: v.views || 0, sessions: v.sessions || 0 };
+    });
+    renderDashboard();
+  } catch (err) {
+    console.error('analytics:', err?.code ?? 'unknown');   // non-fatal — requests dashboard still works
+  }
+}
+
+function buildDemoAnalytics() {
+  const out = [];
+  const today = startOfDay(new Date());
+  for (let i = 39; i >= 0; i -= 1) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    const weekend = d.getDay() === 0 || d.getDay() === 6;
+    const views = (weekend ? 14 : 28) + (i % 5) * 2;
+    out.push({ date: d, views, sessions: Math.round(views * 0.68) });
+  }
+  return out;
+}
+
 function renderDashboard() {
   const m = computeMetrics(submissionsCache);
   latestMetrics = m;
+  const vm = computeVisitorMetrics(analyticsCache);
+  latestVisitorMetrics = vm;
   renderMetrics(m);
+  renderVisitorMetrics(m, vm);
   updateCharts(m);
+  updateVisitorCharts(vm);
   renderRequests();
 }
 
 function setDashView(view) {
   const requestsOnly = view === 'requests';
   el('kpi-row').hidden = requestsOnly;
+  el('visitor-row').hidden = requestsOnly;
   el('ranking-panel').hidden = requestsOnly;
   el('dash-grid').classList.toggle('dash-grid--full', requestsOnly);
 }
@@ -344,11 +385,8 @@ function computeMetrics(subs) {
 
   const topCompanies = [...companies.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
 
-  const weekday = [0, 0, 0, 0, 0, 0, 0];   // Mon → Sun
-  for (const d of dated) weekday[(d.getDay() + 6) % 7] += 1;
-
   return {
-    total, byStatus, handled, handledPct, open: byStatus.new, weekday,
+    total, byStatus, handled, handledPct, open: byStatus.new,
     thisWeek: countBetween(wStart, tomorrow), lastWeek: countBetween(wPrev, wStart),
     thisMonth: countBetween(mStart, tomorrow), lastMonth: countBetween(mPrev, mStart),
     topCompanies,
@@ -360,31 +398,57 @@ function computeMetrics(subs) {
   };
 }
 
-function buildBuckets(dated, gran) {
+// Shared range generator so submissions + visits bucket on IDENTICAL period boundaries
+// (keeps the conversion-rate numerator and denominator aligned).
+function bucketRanges(gran) {
   const now = new Date();
   const out = [];
-  const between = (start, end) => dated.filter((d) => d >= start && d < end).length;
-
   if (gran === 'daily') {
     for (let i = 29; i >= 0; i -= 1) {
-      const day = startOfDay(now); day.setDate(day.getDate() - i);
-      const next = new Date(day); next.setDate(next.getDate() + 1);
-      out.push({ label: day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), count: between(day, next) });
+      const start = startOfDay(now); start.setDate(start.getDate() - i);
+      const end = new Date(start); end.setDate(end.getDate() + 1);
+      out.push({ label: start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), start, end });
     }
   } else if (gran === 'weekly') {
     for (let i = 11; i >= 0; i -= 1) {
       const end = startOfDay(now); end.setDate(end.getDate() - i * 7 + 1);
       const start = new Date(end); start.setDate(start.getDate() - 7);
-      out.push({ label: start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), count: between(start, end) });
+      out.push({ label: start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), start, end });
     }
   } else {
     for (let i = 11; i >= 0; i -= 1) {
-      const m = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const next = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
-      out.push({ label: m.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }), count: between(m, next) });
+      const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+      out.push({ label: start.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }), start, end });
     }
   }
   return out;
+}
+
+function buildBuckets(dated, gran) {
+  return bucketRanges(gran).map((r) => ({
+    label: r.label,
+    count: dated.filter((d) => d >= r.start && d < r.end).length,
+  }));
+}
+
+function computeVisitorMetrics(rows) {
+  const now = new Date();
+  const dated = rows.filter((r) => r.date instanceof Date && !Number.isNaN(r.date.getTime()));
+  const tomorrow = startOfDay(now); tomorrow.setDate(tomorrow.getDate() + 1);
+  const shift = (base, days) => { const x = new Date(base); x.setDate(x.getDate() + days); return x; };
+  const sumBetween = (start, end, key) =>
+    dated.reduce((a, r) => a + ((r.date >= start && r.date < end) ? (r[key] || 0) : 0), 0);
+  const wStart = shift(tomorrow, -7), wPrev = shift(wStart, -7);
+  const mStart = shift(tomorrow, -30), mPrev = shift(mStart, -30);
+  const series = (gran) => bucketRanges(gran).map((r) => ({ label: r.label, value: sumBetween(r.start, r.end, 'views') }));
+  return {
+    thisWeekViews: sumBetween(wStart, tomorrow, 'views'), lastWeekViews: sumBetween(wPrev, wStart, 'views'),
+    thisMonthViews: sumBetween(mStart, tomorrow, 'views'), lastMonthViews: sumBetween(mPrev, mStart, 'views'),
+    thisWeekSessions: sumBetween(wStart, tomorrow, 'sessions'), lastWeekSessions: sumBetween(wPrev, wStart, 'sessions'),
+    thisMonthSessions: sumBetween(mStart, tomorrow, 'sessions'), lastMonthSessions: sumBetween(mPrev, mStart, 'sessions'),
+    buckets: { daily: series('daily'), weekly: series('weekly'), monthly: series('monthly') },
+  };
 }
 
 function setDelta(node, delta, suffix) {
@@ -425,6 +489,31 @@ function recolorLegend() {
   STATUSES.forEach((st, i) => { if (dots[i]) dots[i].style.background = cssVar(`--${st}`); });
 }
 
+// Visitor KPIs: total visits (period) + conversion rate (requests ÷ sessions, same period).
+function renderVisitorMetrics(m, vm) {
+  const monthly = granularity === 'monthly';
+  const views        = monthly ? vm.thisMonthViews    : vm.thisWeekViews;
+  const prevViews    = monthly ? vm.lastMonthViews    : vm.lastWeekViews;
+  const sessions     = monthly ? vm.thisMonthSessions : vm.thisWeekSessions;
+  const prevSessions = monthly ? vm.lastMonthSessions : vm.lastWeekSessions;
+  const subs         = monthly ? m.thisMonth          : m.thisWeek;
+  const prevSubs     = monthly ? m.lastMonth          : m.lastWeek;
+
+  animateNumber(el('kpi-visits'), views, { format: (n) => Math.round(n).toLocaleString() });
+  el('kpi-visits-note').textContent = `${sessions.toLocaleString()} session${sessions === 1 ? '' : 's'}`;
+  setDelta(el('kpi-visits-badge'), views - prevViews, '');
+
+  // Conversion can exceed 100% when sessions are under-counted; clamp the display. '—' when
+  // there are no sessions yet (avoids a divide-by-zero reading as 0%).
+  const cvr = sessions > 0 ? (subs / sessions) * 100 : null;
+  const prevCvr = prevSessions > 0 ? (prevSubs / prevSessions) * 100 : null;
+  el('kpi-cvr').textContent = cvr === null ? '—' : `${Math.min(cvr, 100).toFixed(1)}%`;
+  el('kpi-cvr-note').textContent = `${subs} request${subs === 1 ? '' : 's'} ÷ ${sessions} session${sessions === 1 ? '' : 's'}`;
+  const badge = el('kpi-cvr-badge');
+  if (cvr !== null && prevCvr !== null) setDelta(badge, Math.round(cvr - prevCvr), 'pt');
+  else { badge.textContent = ''; badge.classList.remove('is-up', 'is-down'); }
+}
+
 // ─── Charts (Chart.js UMD global; guarded for CDN load order) ────────────────
 const hasChart = () => typeof window.Chart !== 'undefined';
 
@@ -432,7 +521,7 @@ const hasChart = () => typeof window.Chart !== 'undefined';
 function readChartColors() {
   return {
     ink: cssVar('--chart-ink'), grid: cssVar('--chart-grid'), donutBorder: cssVar('--donut-border'),
-    accent: cssVar('--accent'), trendFill: cssVar('--trend-fill'),
+    accent: cssVar('--accent'), trendFill: cssVar('--trend-fill'), visitsFill: cssVar('--visits-fill'),
     new: cssVar('--new'), contacted: cssVar('--contacted'), closed: cssVar('--closed'),
   };
 }
@@ -458,9 +547,18 @@ function updateCharts(m) {
   charts.companies.data.labels = cur.topCompanies.map(([c]) => c);
   charts.companies.data.datasets[0].data = cur.topCompanies.map(([, n]) => n);
   charts.companies.update();
+}
 
-  charts.cadence.data.datasets[0].data = cur.weekday ?? [0, 0, 0, 0, 0, 0, 0];
-  charts.cadence.update();
+function updateVisitorCharts(vm) {
+  if (vm) latestVisitorMetrics = vm;
+  if (!hasChart()) { window.addEventListener('load', () => updateVisitorCharts(), { once: true }); return; }
+  ensureCharts();
+  const cur = latestVisitorMetrics;
+  if (!cur || !charts.visits) return;
+  const b = cur.buckets[granularity] ?? [];
+  charts.visits.data.labels = b.map((x) => x.label);
+  charts.visits.data.datasets[0].data = b.map((x) => x.value);
+  charts.visits.update();
 }
 
 function ensureCharts() {
@@ -509,15 +607,17 @@ function ensureCharts() {
       } },
   });
 
-  charts.cadence = new Chart(el('cadence-chart'), {
-    type: 'bar',
-    data: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      datasets: [{ label: 'Requests', data: [0, 0, 0, 0, 0, 0, 0],
-        backgroundColor: c.new, borderRadius: 4, borderSkipped: false, maxBarThickness: 34 }] },
+  charts.visits = new Chart(el('visits-chart'), {
+    type: 'line',
+    data: { labels: [], datasets: [{ label: 'Visits', data: [],
+      borderColor: c.new, backgroundColor: c.visitsFill,
+      borderWidth: 2, fill: true, tension: 0.35, pointRadius: 0, pointHoverRadius: 5,
+      pointBackgroundColor: c.new }] },
     options: { responsive: true, maintainAspectRatio: false, animation,
       plugins: { legend: { display: false }, tooltip: { intersect: false, mode: 'index' } },
+      interaction: { intersect: false, mode: 'index' },
       scales: {
-        x: { grid: { display: false }, ticks: { color: c.ink } },
+        x: { grid: { display: false }, ticks: { color: c.ink, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } },
         y: { beginAtZero: true, grid: { color: c.grid }, ticks: { color: c.ink, precision: 0, maxTicksLimit: 5 } },
       } },
   });
@@ -542,14 +642,24 @@ function applyChartTheme() {
   t.options.scales.y.grid.color = c.grid;
   t.update('none');
 
-  for (const key of ['companies', 'cadence']) {
-    const ch = charts[key];
-    if (!ch) continue;
-    ch.data.datasets[0].backgroundColor = c.new;
-    ch.options.scales.x.ticks.color = c.ink;
-    ch.options.scales.y.ticks.color = c.ink;
-    ch.options.scales.y.grid.color = c.grid;
-    ch.update('none');
+  const v = charts.visits;
+  if (v) {
+    v.data.datasets[0].borderColor = c.new;
+    v.data.datasets[0].pointBackgroundColor = c.new;
+    v.data.datasets[0].backgroundColor = c.visitsFill;
+    v.options.scales.x.ticks.color = c.ink;
+    v.options.scales.y.ticks.color = c.ink;
+    v.options.scales.y.grid.color = c.grid;
+    v.update('none');
+  }
+
+  const co = charts.companies;
+  if (co) {
+    co.data.datasets[0].backgroundColor = c.new;
+    co.options.scales.x.ticks.color = c.ink;
+    co.options.scales.y.ticks.color = c.ink;
+    co.options.scales.x.grid.color = c.grid;   // horizontal bar → grid is on the x axis
+    co.update('none');
   }
 }
 
@@ -789,6 +899,7 @@ el('granularity').addEventListener('click', (e) => {
   el('granularity').querySelectorAll('.seg__btn').forEach((b) => b.classList.toggle('is-active', b === btn));
   granularity = btn.dataset.gran;
   if (latestMetrics) { updateCharts(latestMetrics); renderMetrics(latestMetrics); }
+  if (latestVisitorMetrics) { updateVisitorCharts(latestVisitorMetrics); renderVisitorMetrics(latestMetrics, latestVisitorMetrics); }
 });
 
 el('dash-nav').addEventListener('click', (e) => {
@@ -812,6 +923,7 @@ if (DEMO) {
   onAuthStateChanged(auth, (user) => {
     if (unsubscribeSubmissions) { unsubscribeSubmissions(); unsubscribeSubmissions = null; }
     submissionsCache = [];
+    analyticsCache = [];
     destroyCharts();
     currentUser = user;
     if (!user) { showView('signin'); return; }
