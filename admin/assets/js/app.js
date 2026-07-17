@@ -238,9 +238,12 @@ function renderDashboard() {
 
 function setDashView(view) {
   const requestsOnly = view === 'requests';
-  el('kpi-row').hidden = requestsOnly;
+  const isAssistant = view === 'assistant';
+  el('kpi-row').hidden = requestsOnly || isAssistant;
   el('ranking-panel').hidden = requestsOnly;
   el('dash-grid').classList.toggle('dash-grid--full', requestsOnly);
+  el('dash-grid').hidden = isAssistant;
+  el('assistant-panel').hidden = !isAssistant;
 }
 
 // ─── Metrics ─────────────────────────────────────────────────────────────────
@@ -574,6 +577,11 @@ function renderCard(s) {
 // ─── Startup ─────────────────────────────────────────────────────────────────
 // Runs last, after every declaration above is initialized. Dashboard controls are
 // wired even while app-view is hidden (the elements exist in the DOM regardless).
+
+// Read-only accessor for copilot.js — returns a shallow copy so the assistant
+// can never mutate submissionsCache; no write path is exposed.
+window.__getSubmissions = () => submissionsCache.slice();
+
 el('search-input').addEventListener('input', renderRequests);
 
 el('status-tabs').addEventListener('click', (e) => {

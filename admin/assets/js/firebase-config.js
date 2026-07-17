@@ -21,7 +21,7 @@ const app = initializeApp(firebaseConfig);
 // IMPORTANT one-time setup: add THIS portal's domain to the key's allowed domains in the
 // reCAPTCHA admin console, and register it under Firebase Console → App Check. Otherwise
 // Firestore reads from here are blocked once App Check enforcement is on.
-initializeAppCheck(app, {
+export const appCheck = initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider('6LdijXAsAAAAAMx7IN8c6DQxnAHoRBBlRbn1clWy'),
   isTokenAutoRefreshEnabled: true,
 });
