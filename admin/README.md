@@ -24,8 +24,14 @@ The public site and this admin portal are two Hosting **targets** in the repo's
 
 ## What the team can do
 
-- Review every submission live, search/filter, set status (New → Contacted → Closed),
-  add internal notes, and click an email to reply.
+- **Overview dashboard** — KPIs computed live from the submissions (no tracking, no
+  extra data source): percent **handled** (contacted or closed) with an open count, a
+  **total requests** count with a status-breakdown doughnut + legend, and a **requests
+  over time** trend with a Daily / Weekly / Monthly toggle, plus a **top-companies**
+  ranking.
+- **Requests** — review every submission live, search/filter by status (All / New /
+  Contacted / Closed), set status, add internal notes, and click an email to reply. A
+  live snapshot arriving mid-edit won't wipe a half-typed note.
 
 ## Managing admins (IT, on the terminal)
 
@@ -86,13 +92,24 @@ appear on the deployed site. Status/notes are interactive but nothing is saved.
 
 ## Files (`admin/`)
 
-- `index.html` — sign-in / verify / denied / Requests dashboard.
+- `index.html` — sign-in / verify / denied views + the analytics dashboard (sidebar,
+  KPI cards, charts, requests table). Loads Chart.js from the CDN (see below).
 - `assets/js/firebase-config.js` — Firebase init (same project) + Auth + App Check.
-- `assets/js/app.js` — email/password sign-in, live submissions, status/notes.
-- `assets/css/styles.css` — styling.
+- `assets/js/app.js` — email/password sign-in, live submissions, `computeMetrics()`,
+  Chart.js charts, status/notes.
+- `assets/css/styles.css` — theme tokens + dashboard styling (KPI cards, charts, table).
 - `scripts/provision-admin.mjs` — terminal tool IT uses to add admins / reset passwords.
 
 The Hosting config for both sites lives in the repo root `firebase.json` / `.firebaserc`.
+
+## Third-party dependencies
+
+- **Chart.js 4.4.6** — loaded from `cdn.jsdelivr.net` in `index.html`, pinned to an exact
+  version with a Subresource Integrity (SRI) hash. The admin Hosting target's CSP
+  `script-src` (in the root `firebase.json`) allows `https://cdn.jsdelivr.net` for this.
+  To bump the version: update the `<script>` `src` **and** recompute the `integrity` hash —
+  `curl -s <url> | openssl dgst -sha384 -binary | openssl base64 -A` — then redeploy the
+  admin site. Charts render on a `<canvas>`, so submission text is never drawn as HTML.
 
 ## Security notes
 
