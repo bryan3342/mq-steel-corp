@@ -444,18 +444,24 @@ html, body {
               color var(--dur-med) var(--ease-standard);
 }
 
-/* ── Flux — chat popup opened from the sidebar "Flux" item ─── */
-.navlink__img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; flex: none; }
+/* ── Flux — chat bubble that opens from the sidebar "Flux" item ─── */
+.navlink__img { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; flex: none; }
 
-.flux { position: fixed; right: 1.5rem; bottom: 1.5rem; z-index: 60; pointer-events: none; }
+.flux { display: contents; }
 
 .flux__box {
-  pointer-events: auto;
-  width: min(370px, calc(100vw - 3rem)); height: min(540px, calc(100vh - 9rem));
+  position: fixed; z-index: 60; left: 0; top: 0;          /* copilot.js sets left/top on open */
+  width: min(340px, calc(100vw - 2rem)); height: min(500px, calc(100vh - 2rem));
   background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, .28); display: flex; flex-direction: column; overflow: hidden;
-  animation: view-in var(--dur-med) var(--ease-out);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .28); display: flex; flex-direction: column;
+  transform-origin: left top; animation: view-in var(--dur-med) var(--ease-out);
 }
+.flux__box::before {                                       /* pointer toward the Flux button */
+  content: ""; position: absolute; left: -6px; top: 18px;
+  width: 12px; height: 12px; background: var(--navy); transform: rotate(45deg);
+}
+.flux__header { border-radius: 16px 16px 0 0; }
+.flux__form { border-radius: 0 0 16px 16px; }
 .flux__header {
   display: flex; align-items: center; gap: .6rem; padding: .7rem .85rem; flex: none;
   background: var(--navy); color: #fff;

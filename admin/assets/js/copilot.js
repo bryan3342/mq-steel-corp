@@ -61,10 +61,25 @@ async function ask(question) {
 }
 
 // ── Widget open / close ──────────────────────────────────────────────────────
+// Anchor the chat bubble beside the sidebar "Flux" button so it opens "from" it.
+function positionBox() {
+  const box = el('flux-box'), opener = el('flux-open');
+  if (!box || !opener || box.hidden) return;
+  const r = opener.getBoundingClientRect();
+  const w = box.offsetWidth, h = box.offsetHeight;
+  let left = r.right + 14;
+  if (left + w > window.innerWidth - 12) left = Math.max(12, r.left - w - 14);
+  let top = Math.min(r.top, window.innerHeight - h - 12);
+  if (top < 12) top = 12;
+  box.style.left = `${left}px`;
+  box.style.top = `${top}px`;
+}
+
 let introShown = false;
 function openFlux() {
   const box = el('flux-box'); if (!box) return;
   box.hidden = false;
+  positionBox();
   el('flux')?.classList.add('is-open');
   const opener = el('flux-open');
   opener?.classList.add('is-active');
@@ -94,6 +109,7 @@ export function initCopilot() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !el('flux-box')?.hidden) closeFlux();
   });
+  window.addEventListener('resize', () => positionBox());
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
