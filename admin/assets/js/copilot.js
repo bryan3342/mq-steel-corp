@@ -9,7 +9,7 @@ import { redact } from './redact.js';
 // "Refresh insights" action wired to those functions is not built here.
 
 // OWNER TODO: replace with the real Worker URL once deployed (see Task 9).
-const WORKER_URL = 'https://mq-steel-assistant.REPLACE.workers.dev/chat';
+const WORKER_URL = 'https://mq-steel-assistant.bryanmejiaeducation.workers.dev/chat';
 
 const el = (id) => document.getElementById(id);
 const log = () => el('assistant-log');

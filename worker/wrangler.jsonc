@@ -1,12 +1,21 @@
 {
-  "name": "mq-steel-assistant",
-  "main": "src/index.js",
-  "compatibility_date": "2025-01-01",
-  "compatibility_flags": ["nodejs_compat"],
-  "ai": { "binding": "AI" },
-  "kv_namespaces": [{ "binding": "RATE", "id": "REPLACE_AFTER_KV_CREATE" }],
-  "vars": {
-    "FIREBASE_PROJECT_ID": "mq-steel-corp",
-    "ALLOWED_ORIGINS": "https://mq-steel-admin.web.app,https://mq-steel-corp.firebaseapp.com"
-  }
+	"name": "mq-steel-assistant",
+	"main": "src/index.js",
+	"compatibility_date": "2025-01-01",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"ai": {
+		"binding": "AI"
+	},
+	"kv_namespaces": [
+		{
+			"binding": "RATE",
+			"id": "0d803b83220f41c0a3d142f055771fe4"
+		}
+	],
+	"vars": {
+		"FIREBASE_PROJECT_ID": "mq-steel-corp",
+		"ALLOWED_ORIGINS": "https://mq-steel-admin.web.app,https://mq-steel-corp.firebaseapp.com"
+	}
 }

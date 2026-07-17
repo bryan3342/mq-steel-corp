@@ -2,7 +2,15 @@
   "name": "mq-steel-assistant-worker",
   "private": true,
   "type": "module",
-  "scripts": { "dev": "wrangler dev", "deploy": "wrangler deploy", "test": "node --test" },
-  "dependencies": { "jose": "^5.9.6" },
-  "devDependencies": { "wrangler": "^3.90.0" }
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "jose": "^5.9.6"
+  },
+  "devDependencies": {
+    "wrangler": "^4.112.0"
+  }
 }
