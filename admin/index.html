@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+  <!-- Pre-paint theme bootstrap (must be a same-origin file — the admin CSP forbids inline scripts) -->
+  <script src="assets/js/theme-boot.js"></script>
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
@@ -17,7 +19,7 @@
   <header class="appbar" id="app-header" hidden>
     <div class="appbar__brand"><span>MQ</span> Steel Corp · Admin</div>
     <div class="appbar__user">
-      <span id="user-email" class="appbar__email"></span>
+      <span class="appbar__console">Admin Console</span>
       <button type="button" class="btn btn--ghost btn--small" data-signout>Sign out</button>
     </div>
   </header>
@@ -91,13 +93,18 @@
 
       <!-- Sidebar -->
       <aside class="sidebar">
-        <div class="sidebar__title">Dashboard</div>
+        <div class="sidebar__head">
+          <div class="sidebar__title">Dashboard</div>
+          <button type="button" class="sidebar__toggle" id="sidebar-toggle" aria-label="Collapse sidebar" aria-expanded="true" aria-controls="dash-nav">
+            <svg class="sidebar__chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+        </div>
         <nav class="sidebar__nav" id="dash-nav">
-          <button type="button" class="navlink is-active" data-view="overview">
+          <button type="button" class="navlink is-active" data-view="overview" title="Overview" aria-label="Overview">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
             <span>Overview</span>
           </button>
-          <button type="button" class="navlink" data-view="requests">
+          <button type="button" class="navlink" data-view="requests" title="Requests" aria-label="Requests">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             <span>Requests</span>
           </button>
@@ -145,6 +152,13 @@
           </article>
         </div>
 
+        <!-- Submission cadence -->
+        <section class="panel" id="cadence-panel">
+          <h3 class="panel__title">Submission cadence</h3>
+          <p class="panel__sub">Requests by day of week</p>
+          <div class="cadence"><canvas id="cadence-chart" aria-label="Requests by day of week"></canvas></div>
+        </section>
+
         <!-- Table + ranking -->
         <div class="dash-grid" id="dash-grid">
           <section class="panel" id="requests-panel">
@@ -160,7 +174,7 @@
                 <span class="panel__count"><strong id="requests-count">0</strong></span>
               </div>
             </div>
-            <div id="requests-list" class="requests"></div>
+            <div id="requests-list" class="rtable"></div>
           </section>
 
           <section class="panel" id="ranking-panel">
@@ -171,6 +185,11 @@
         </div>
 
       </div>
+
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch color theme" aria-pressed="false" title="Toggle light / dark">
+        <svg class="theme-toggle__sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.1" y2="19.1"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.9" y1="19.1" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.1" y2="4.9"/></svg>
+        <svg class="theme-toggle__moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+      </button>
     </section>
 
   </main>

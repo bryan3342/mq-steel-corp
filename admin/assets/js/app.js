@@ -9,9 +9,8 @@ import {
 
 const STATUSES = ['new', 'contacted', 'closed'];
 const STATUS_LABELS = { new: 'New', contacted: 'Contacted', closed: 'Closed' };
-// Categorical status palette — validated CVD-safe (worst pair ΔE 16.2) + always paired
-// with text labels. Mirrors the CSS --new/--contacted/--closed tokens.
-const STATUS_COLORS = { new: '#2563eb', contacted: '#d97706', closed: '#16a34a' };
+// Status colors live in CSS (--new/--contacted/--closed) and are read via getComputedStyle,
+// so charts + legend track the light/dark theme. Palette validated CVD-safe (worst pair ΔE 16.2).
 const el = (id) => document.getElementById(id);
 
 // IMPORTANT: every value from a submission is written with `textContent` (never
@@ -64,9 +63,82 @@ let granularity = 'daily';
 const charts = {};
 let latestMetrics = null;
 
+// ─── UI helpers: motion, theme, sidebar ──────────────────────────────────────
+const REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)');
+const root = document.documentElement;
+const cssVar = (name) => getComputedStyle(root).getPropertyValue(name).trim();
+const THEME_KEY = 'mq_admin_theme';
+const SIDEBAR_KEY = 'mq_admin_sidebar';
+
+// rAF count-up that always lands on the exact value; supersede-guarded against
+// overlapping snapshots; snaps immediately under reduced-motion.
+function animateNumber(node, to, { suffix = '', format } = {}) {
+  if (!node) return;
+  const fmt = format || ((n) => String(Math.round(n)));
+  const from = parseFloat((node.textContent || '').replace(/[^\d.-]/g, '')) || 0;
+  if (REDUCE.matches || from === to) { node.textContent = fmt(to) + suffix; return; }
+  if (node.__anim) cancelAnimationFrame(node.__anim);
+  const t0 = performance.now();
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+  const step = (now) => {
+    const p = Math.min(1, (now - t0) / 700);
+    node.textContent = fmt(from + (to - from) * ease(p)) + suffix;
+    if (p < 1) node.__anim = requestAnimationFrame(step);
+    else { node.textContent = fmt(to) + suffix; node.__anim = null; }
+  };
+  node.__anim = requestAnimationFrame(step);
+}
+
+function playViewEnter(node) {
+  if (!node || REDUCE.matches) return;
+  node.classList.remove('view-enter');
+  void node.offsetWidth;                 // force reflow so the animation restarts
+  node.classList.add('view-enter');
+}
+
+const currentTheme = () => (root.dataset.theme === 'dark' ? 'dark' : 'light');
+function applyTheme(theme, { animate = false } = {}) {
+  if (animate && !REDUCE.matches) {
+    root.classList.add('theme-switching');
+    setTimeout(() => root.classList.remove('theme-switching'), 300);
+  }
+  root.dataset.theme = theme;
+  try { localStorage.setItem(THEME_KEY, theme); } catch { /* storage blocked */ }
+  const btn = el('theme-toggle');
+  if (btn) btn.setAttribute('aria-pressed', String(theme === 'dark'));
+  applyChartTheme();
+  recolorLegend();
+}
+function wireTheme() {
+  const btn = el('theme-toggle');
+  if (!btn) return;
+  btn.setAttribute('aria-pressed', String(currentTheme() === 'dark'));
+  btn.addEventListener('click', () =>
+    applyTheme(currentTheme() === 'dark' ? 'light' : 'dark', { animate: true }));
+}
+
+function applySidebar(collapsed) {
+  el('app-view').classList.toggle('dash--collapsed', collapsed);
+  const btn = el('sidebar-toggle');
+  if (btn) {
+    btn.setAttribute('aria-expanded', String(!collapsed));
+    btn.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+  }
+  try { localStorage.setItem(SIDEBAR_KEY, collapsed ? 'collapsed' : 'expanded'); } catch { /* noop */ }
+}
+function wireSidebar() {
+  let collapsed = false;
+  try { collapsed = localStorage.getItem(SIDEBAR_KEY) === 'collapsed'; } catch { /* noop */ }
+  applySidebar(collapsed);   // applied while #app-view is hidden → no first-paint animation
+  const btn = el('sidebar-toggle');
+  if (btn) btn.addEventListener('click', () =>
+    applySidebar(!el('app-view').classList.contains('dash--collapsed')));
+}
+
 function showView(name) {
   Object.entries(views).forEach(([k, node]) => { if (node) node.hidden = k !== name; });
   el('app-header').hidden = name !== 'app';
+  playViewEnter(views[name]);
 }
 
 showView('loading');
@@ -191,7 +263,6 @@ async function evaluateAccess(user) {
     return;
   }
 
-  el('user-email').textContent = user.email ?? '';
   showView('app');
   subscribeSubmissions();
 }
@@ -205,7 +276,6 @@ function startDemo() {
   document.querySelectorAll('[data-signout]').forEach((b) =>
     b.addEventListener('click', () => { location.search = ''; }));
 
-  el('user-email').textContent = 'demo@mqsteelcorp.com';
   submissionsCache = DEMO_SUBMISSIONS.map((s) => ({ ...s }));
   showView('app');
   renderDashboard();
@@ -274,8 +344,11 @@ function computeMetrics(subs) {
 
   const topCompanies = [...companies.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
 
+  const weekday = [0, 0, 0, 0, 0, 0, 0];   // Mon → Sun
+  for (const d of dated) weekday[(d.getDay() + 6) % 7] += 1;
+
   return {
-    total, byStatus, handled, handledPct, open: byStatus.new,
+    total, byStatus, handled, handledPct, open: byStatus.new, weekday,
     thisWeek: countBetween(wStart, tomorrow), lastWeek: countBetween(wPrev, wStart),
     thisMonth: countBetween(mStart, tomorrow), lastMonth: countBetween(mPrev, mStart),
     topCompanies,
@@ -323,14 +396,14 @@ function setDelta(node, delta, suffix) {
 }
 
 function renderMetrics(m) {
-  el('kpi-total').textContent = m.total;
+  animateNumber(el('kpi-total'), m.total, { format: (n) => Math.round(n).toLocaleString() });
   el('kpi-open').textContent = `${m.open} open`;
-  el('kpi-handled').textContent = `${m.handledPct}%`;
+  animateNumber(el('kpi-handled'), m.handledPct, { suffix: '%' });
   el('kpi-handled-bar').style.width = `${m.handledPct}%`;
   setDelta(el('kpi-total-badge'), m.thisMonth - m.lastMonth, 'mo');
 
   const monthly = granularity === 'monthly';
-  el('kpi-period-count').textContent = monthly ? m.thisMonth : m.thisWeek;
+  animateNumber(el('kpi-period-count'), monthly ? m.thisMonth : m.thisWeek);
   setDelta(el('kpi-period-delta'), (monthly ? m.thisMonth - m.lastMonth : m.thisWeek - m.lastWeek), '');
 
   // status legend (dot + label + count; identity is never color-alone)
@@ -338,7 +411,7 @@ function renderMetrics(m) {
   ul.replaceChildren();
   for (const st of STATUSES) {
     const li = document.createElement('li');
-    const dot = document.createElement('span'); dot.className = 'legend-dot'; dot.style.background = STATUS_COLORS[st];
+    const dot = document.createElement('span'); dot.className = 'legend-dot'; dot.style.background = cssVar(`--${st}`);
     const lab = document.createElement('span'); lab.className = 'legend-label'; lab.textContent = STATUS_LABELS[st];
     const val = document.createElement('span'); val.className = 'legend-val'; val.textContent = m.byStatus[st];
     li.append(dot, lab, val);
@@ -346,8 +419,23 @@ function renderMetrics(m) {
   }
 }
 
+// Re-paint the legend dots when the theme flips (the --new/--contacted/--closed tokens change).
+function recolorLegend() {
+  const dots = document.querySelectorAll('#status-legend .legend-dot');
+  STATUSES.forEach((st, i) => { if (dots[i]) dots[i].style.background = cssVar(`--${st}`); });
+}
+
 // ─── Charts (Chart.js UMD global; guarded for CDN load order) ────────────────
 const hasChart = () => typeof window.Chart !== 'undefined';
+
+// Colors are read from CSS so charts follow the light/dark theme.
+function readChartColors() {
+  return {
+    ink: cssVar('--chart-ink'), grid: cssVar('--chart-grid'), donutBorder: cssVar('--donut-border'),
+    accent: cssVar('--accent'), trendFill: cssVar('--trend-fill'),
+    new: cssVar('--new'), contacted: cssVar('--contacted'), closed: cssVar('--closed'),
+  };
+}
 
 function updateCharts(m) {
   if (m) latestMetrics = m;
@@ -370,52 +458,99 @@ function updateCharts(m) {
   charts.companies.data.labels = cur.topCompanies.map(([c]) => c);
   charts.companies.data.datasets[0].data = cur.topCompanies.map(([, n]) => n);
   charts.companies.update();
+
+  charts.cadence.data.datasets[0].data = cur.weekday ?? [0, 0, 0, 0, 0, 0, 0];
+  charts.cadence.update();
 }
 
 function ensureCharts() {
   if (charts.status || !hasChart()) return;
   const { Chart } = window;
-  const line = '#e2e8f0';
+  const c = readChartColors();
   Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
-  Chart.defaults.color = '#475569';
+  Chart.defaults.color = c.ink;
+  const animation = { duration: REDUCE.matches ? 0 : 600, easing: 'easeOutQuart' };
 
   charts.status = new Chart(el('status-chart'), {
     type: 'doughnut',
     data: {
       labels: [STATUS_LABELS.new, STATUS_LABELS.contacted, STATUS_LABELS.closed],
-      datasets: [{ data: [0, 0, 0], borderWidth: 2, borderColor: '#ffffff',
-        backgroundColor: [STATUS_COLORS.new, STATUS_COLORS.contacted, STATUS_COLORS.closed] }],
+      datasets: [{ data: [0, 0, 0], borderWidth: 2, borderColor: c.donutBorder,
+        backgroundColor: [c.new, c.contacted, c.closed] }],
     },
-    options: { responsive: true, maintainAspectRatio: false, cutout: '68%',
+    options: { responsive: true, maintainAspectRatio: false, cutout: '68%', animation,
       plugins: { legend: { display: false } } },
   });
 
   charts.trend = new Chart(el('trend-chart'), {
     type: 'line',
     data: { labels: [], datasets: [{ label: 'Requests', data: [],
-      borderColor: '#d97706', backgroundColor: 'rgba(217,119,6,0.12)',
+      borderColor: c.accent, backgroundColor: c.trendFill,
       borderWidth: 2, fill: true, tension: 0.35, pointRadius: 0, pointHoverRadius: 5,
-      pointBackgroundColor: '#d97706' }] },
-    options: { responsive: true, maintainAspectRatio: false,
+      pointBackgroundColor: c.accent }] },
+    options: { responsive: true, maintainAspectRatio: false, animation,
       plugins: { legend: { display: false }, tooltip: { intersect: false, mode: 'index' } },
       interaction: { intersect: false, mode: 'index' },
       scales: {
-        x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } },
-        y: { beginAtZero: true, grid: { color: line }, ticks: { precision: 0, maxTicksLimit: 5 } },
+        x: { grid: { display: false }, ticks: { color: c.ink, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } },
+        y: { beginAtZero: true, grid: { color: c.grid }, ticks: { color: c.ink, precision: 0, maxTicksLimit: 5 } },
       } },
   });
 
   charts.companies = new Chart(el('companies-chart'), {
     type: 'bar',
     data: { labels: [], datasets: [{ label: 'Requests', data: [],
-      backgroundColor: '#2563eb', borderRadius: 4, borderSkipped: false, barThickness: 14 }] },
-    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      backgroundColor: c.new, borderRadius: 4, borderSkipped: false, barThickness: 14 }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation,
       plugins: { legend: { display: false } },
       scales: {
-        x: { beginAtZero: true, grid: { color: line }, ticks: { precision: 0, maxTicksLimit: 5 } },
-        y: { grid: { display: false } },
+        x: { beginAtZero: true, grid: { color: c.grid }, ticks: { color: c.ink, precision: 0, maxTicksLimit: 5 } },
+        y: { grid: { display: false }, ticks: { color: c.ink } },
       } },
   });
+
+  charts.cadence = new Chart(el('cadence-chart'), {
+    type: 'bar',
+    data: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [{ label: 'Requests', data: [0, 0, 0, 0, 0, 0, 0],
+        backgroundColor: c.new, borderRadius: 4, borderSkipped: false, maxBarThickness: 34 }] },
+    options: { responsive: true, maintainAspectRatio: false, animation,
+      plugins: { legend: { display: false }, tooltip: { intersect: false, mode: 'index' } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: c.ink } },
+        y: { beginAtZero: true, grid: { color: c.grid }, ticks: { color: c.ink, precision: 0, maxTicksLimit: 5 } },
+      } },
+  });
+}
+
+// Re-color existing charts on a theme flip (no destroy → no instance leak).
+function applyChartTheme() {
+  if (!hasChart() || !charts.status) return;
+  const c = readChartColors();
+  window.Chart.defaults.color = c.ink;
+
+  charts.status.data.datasets[0].borderColor = c.donutBorder;
+  charts.status.data.datasets[0].backgroundColor = [c.new, c.contacted, c.closed];
+  charts.status.update('none');
+
+  const t = charts.trend;
+  t.data.datasets[0].borderColor = c.accent;
+  t.data.datasets[0].pointBackgroundColor = c.accent;
+  t.data.datasets[0].backgroundColor = c.trendFill;
+  t.options.scales.x.ticks.color = c.ink;
+  t.options.scales.y.ticks.color = c.ink;
+  t.options.scales.y.grid.color = c.grid;
+  t.update('none');
+
+  for (const key of ['companies', 'cadence']) {
+    const ch = charts[key];
+    if (!ch) continue;
+    ch.data.datasets[0].backgroundColor = c.new;
+    ch.options.scales.x.ticks.color = c.ink;
+    ch.options.scales.y.ticks.color = c.ink;
+    ch.options.scales.y.grid.color = c.grid;
+    ch.update('none');
+  }
 }
 
 function destroyCharts() {
@@ -423,6 +558,8 @@ function destroyCharts() {
 }
 
 // ─── Requests table ──────────────────────────────────────────────────────────
+const expanded = new Set();   // ids of open rows — survives live snapshots + re-renders
+
 function renderRequests() {
   const term = el('search-input').value.trim().toLowerCase();
   const rows = submissionsCache.filter((s) => {
@@ -437,9 +574,9 @@ function renderRequests() {
   // Preserve an in-progress note edit so a live snapshot doesn't wipe half-typed text.
   const active = document.activeElement;
   let editing = null;
-  if (active && active.tagName === 'TEXTAREA' && active.closest('.card')) {
+  if (active && active.tagName === 'TEXTAREA' && active.closest('.row-group')) {
     editing = {
-      id: active.closest('.card').dataset.id,
+      id: active.closest('.row-group').dataset.id,
       value: active.value, start: active.selectionStart, end: active.selectionEnd,
     };
   }
@@ -454,17 +591,33 @@ function renderRequests() {
     list.append(empty);
     return;
   }
-  rows.forEach((s) => list.append(renderCard(s)));
+
+  list.append(renderTableHead());
+  rows.forEach((s) => list.append(renderRow(s)));
 
   if (editing) {
-    const card = list.querySelector(`.card[data-id="${CSS.escape(editing.id)}"]`);
-    const ta = card?.querySelector('textarea');
+    const group = list.querySelector(`.row-group[data-id="${CSS.escape(editing.id)}"]`);
+    const ta = group?.querySelector('textarea');   // its detail is open (id is in `expanded`)
     if (ta) {
       ta.value = editing.value;
       ta.focus();
       try { ta.setSelectionRange(editing.start, editing.end); } catch { /* noop */ }
     }
   }
+}
+
+function renderTableHead() {
+  const head = document.createElement('div');
+  head.className = 'rtable__head';
+  head.setAttribute('aria-hidden', 'true');   // decorative labels, not real <th>
+  [['Requester', 'th--requester'], ['Company', 'th--company'], ['Service', 'th--service'],
+    ['Status', 'th--status'], ['Submitted', 'th--date']].forEach(([text, cls]) => {
+    const th = document.createElement('span');
+    th.className = `rtable__th ${cls}`;
+    th.textContent = text;
+    head.append(th);
+  });
+  return head;
 }
 
 function fieldLabel(text) {
@@ -474,43 +627,75 @@ function fieldLabel(text) {
   return span;
 }
 
-function renderCard(s) {
-  const card = document.createElement('article');
-  card.className = 'card';
-  card.dataset.status = s.status ?? 'new';
-  card.dataset.id = s.id;
+function shortDate(ts) {
+  try {
+    return ts?.toDate?.().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) ?? '—';
+  } catch { return '—'; }
+}
 
-  const head = document.createElement('div');
-  head.className = 'card__head';
-  const name = document.createElement('h3');
-  name.className = 'card__name';
-  name.textContent = s.name || '(no name)';
-  const badge = document.createElement('span');
-  badge.className = 'badge';
-  badge.textContent = s.status ?? 'new';
-  const date = document.createElement('time');
-  date.className = 'card__date';
-  date.textContent = formatDate(s.submittedAt);
-  head.append(name, badge, date);
+function cell(cls, text) {
+  const span = document.createElement('span');
+  span.className = cls;
+  span.textContent = text;
+  return span;
+}
 
-  const contact = document.createElement('div');
-  contact.className = 'card__contact';
+function renderRow(s) {
+  const group = document.createElement('div');
+  group.className = 'row-group';
+  group.dataset.status = s.status ?? 'new';
+  group.dataset.id = s.id;
+  const isOpen = expanded.has(s.id);
+  if (isOpen) group.classList.add('is-open');
+
+  // Compact row — a native <button> (free focus + Enter/Space, correct tab order).
+  const rowBtn = document.createElement('button');
+  rowBtn.type = 'button';
+  rowBtn.className = 'rrow';
+  rowBtn.setAttribute('aria-expanded', String(isOpen));
+  rowBtn.setAttribute('aria-controls', `rdetail-${s.id}`);
+
+  const requester = document.createElement('span');
+  requester.className = 'rcell rcell--requester';
+  requester.append(cell('rcell__primary', s.name || '(no name)'), cell('rcell__muted', s.email || '—'));
+
+  const statusCell = document.createElement('span');
+  statusCell.className = 'rcell rcell--status';
+  const pill = document.createElement('span');
+  pill.className = 'pill';
+  pill.textContent = STATUS_LABELS[s.status] ?? STATUS_LABELS.new;
+  statusCell.append(pill);
+
+  const dateCell = document.createElement('span');
+  dateCell.className = 'rcell rcell--date';
+  const dateEl = document.createElement('time');
+  dateEl.textContent = shortDate(s.submittedAt);
+  dateCell.append(dateEl);
+
+  rowBtn.append(requester, cell('rcell rcell--company', s.company || '—'),
+    cell('rcell rcell--service', s.service || ''), statusCell, dateCell);
+
+  // Detail (full message + management controls)
+  const detail = document.createElement('div');
+  detail.className = 'rdetail';
+  detail.id = `rdetail-${s.id}`;
+  detail.hidden = !isOpen;
+
+  const contact = document.createElement('p');
+  contact.className = 'rdetail__contact';
   const emailLink = document.createElement('a');
   emailLink.href = 'mailto:' + (s.email ?? '');
   emailLink.textContent = s.email || '—';
   contact.append(emailLink);
-  if (s.company) {
-    const comp = document.createElement('span');
-    comp.textContent = ' · ' + s.company;
-    contact.append(comp);
-  }
+  if (s.company) { const c = document.createElement('span'); c.textContent = ' · ' + s.company; contact.append(c); }
+  const when = document.createElement('span'); when.textContent = ' · ' + formatDate(s.submittedAt); contact.append(when);
 
   const msg = document.createElement('p');
-  msg.className = 'card__message';
+  msg.className = 'rdetail__message';
   msg.textContent = s.service || '';
 
   const controls = document.createElement('div');
-  controls.className = 'card__controls';
+  controls.className = 'rdetail__controls';
 
   const statusField = document.createElement('label');
   statusField.className = 'field';
@@ -519,12 +704,16 @@ function renderCard(s) {
   STATUSES.forEach((st) => {
     const opt = document.createElement('option');
     opt.value = st;
-    opt.textContent = st.charAt(0).toUpperCase() + st.slice(1);
+    opt.textContent = STATUS_LABELS[st];
     if ((s.status ?? 'new') === st) opt.selected = true;
     select.append(opt);
   });
+  const applyLocal = () => {
+    s.status = select.value;
+    group.dataset.status = select.value;
+    pill.textContent = STATUS_LABELS[select.value];
+  };
   select.addEventListener('change', async () => {
-    const applyLocal = () => { s.status = select.value; card.dataset.status = select.value; badge.textContent = select.value; };
     if (DEMO) { applyLocal(); toast('Demo mode — change not saved.'); return; }
     select.disabled = true;
     try {
@@ -544,7 +733,7 @@ function renderCard(s) {
   notesField.className = 'field field--grow';
   notesField.append(fieldLabel('Internal notes'));
   const notes = document.createElement('textarea');
-  notes.rows = 2;
+  notes.rows = 3;
   notes.value = s.adminNotes ?? '';
   notes.placeholder = 'Add a note for your team…';
   const saveNote = document.createElement('button');
@@ -567,8 +756,18 @@ function renderCard(s) {
   notesField.append(notes, saveNote);
 
   controls.append(statusField, notesField);
-  card.append(head, contact, msg, controls);
-  return card;
+  detail.append(contact, msg, controls);
+
+  rowBtn.addEventListener('click', () => {
+    const nowOpen = !expanded.has(s.id);
+    if (nowOpen) expanded.add(s.id); else expanded.delete(s.id);
+    group.classList.toggle('is-open', nowOpen);
+    rowBtn.setAttribute('aria-expanded', String(nowOpen));
+    detail.hidden = !nowOpen;
+  });
+
+  group.append(rowBtn, detail);
+  return group;
 }
 
 // ─── Startup ─────────────────────────────────────────────────────────────────
@@ -598,6 +797,9 @@ el('dash-nav').addEventListener('click', (e) => {
   el('dash-nav').querySelectorAll('.navlink').forEach((n) => n.classList.toggle('is-active', n === btn));
   setDashView(btn.dataset.view);
 });
+
+wireTheme();
+wireSidebar();
 
 if (DEMO) {
   startDemo();
