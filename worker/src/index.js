@@ -1,4 +1,5 @@
 import { callModel } from './model.js';
+import { verifyAdmin, HttpError } from './verify.js';
 
 const j = (obj, status = 200, cors = {}) =>
   new Response(JSON.stringify(obj), { status, headers: { 'content-type': 'application/json', ...cors } });
@@ -24,7 +25,10 @@ export default {
     const url = new URL(req.url);
     if (req.method !== 'POST' || url.pathname !== '/chat') return j({ error: 'not found' }, 404, ch);
     if (!_ok) return j({ error: 'origin not allowed' }, 403, ch);
-    // TODO(Task 3): verify tokens + allowlist. TODO(Task 4): rate limit. TODO(Task 5): real prompt.
+    // TODO(Task 4): rate limit. TODO(Task 5): real prompt.
+    let admin;
+    try { admin = await verifyAdmin(req, env); }
+    catch (e) { return j({ error: e.message || 'unauthorized' }, e.status || 401, ch); }
     try {
       const body = await req.json();
       const text = await callModel(env, {
