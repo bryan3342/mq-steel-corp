@@ -1,0 +1,39 @@
+import { callModel } from './model.js';
+
+const j = (obj, status = 200, cors = {}) =>
+  new Response(JSON.stringify(obj), { status, headers: { 'content-type': 'application/json', ...cors } });
+
+function corsHeaders(req, env) {
+  const origin = req.headers.get('Origin') || '';
+  const allowed = (env.ALLOWED_ORIGINS || '').split(',').map((s) => s.trim());
+  const ok = allowed.includes(origin);
+  return {
+    'Access-Control-Allow-Origin': ok ? origin : allowed[0] || '',
+    'Access-Control-Allow-Headers': 'authorization, x-firebase-appcheck, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Vary': 'Origin',
+    _ok: ok,
+  };
+}
+
+export default {
+  async fetch(req, env) {
+    const cors = corsHeaders(req, env);
+    const { _ok, ...ch } = cors;
+    if (req.method === 'OPTIONS') return new Response(null, { status: _ok ? 204 : 403, headers: ch });
+    const url = new URL(req.url);
+    if (req.method !== 'POST' || url.pathname !== '/chat') return j({ error: 'not found' }, 404, ch);
+    if (!_ok) return j({ error: 'origin not allowed' }, 403, ch);
+    // TODO(Task 3): verify tokens + allowlist. TODO(Task 4): rate limit. TODO(Task 5): real prompt.
+    try {
+      const body = await req.json();
+      const text = await callModel(env, {
+        system: 'You are a helpful assistant.',
+        messages: [{ role: 'user', content: String(body.question || '') }],
+      });
+      return j({ text }, 200, ch);
+    } catch (e) {
+      return j({ error: 'server error' }, 500, ch);
+    }
+  },
+};
