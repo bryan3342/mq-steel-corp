@@ -43,7 +43,7 @@
     <div class="container">
       <div class="privacy__header">
         <h1 class="privacy__title">Privacy Policy</h1>
-        <p class="privacy__meta">Effective date: February 18, 2026</p>
+        <p class="privacy__meta">Effective date: July 17, 2026</p>
       </div>
 
       <div class="privacy__body">
@@ -63,7 +63,8 @@
             <li><strong>Company name</strong> (optional) — to understand your organizational context</li>
             <li><strong>Project description</strong> — to evaluate the scope of your request</li>
           </ul>
-          <p>We do not collect payment information, government IDs, or any sensitive personal data. We do not use tracking cookies, advertising pixels, or behavioral analytics.</p>
+          <p><strong>Automatically collected (aggregate only):</strong> to understand overall site traffic, we keep anonymous daily counts of page views and visits. These are plain running totals — they contain no IP address, no cookies, and no identifiers, and cannot be linked back to you or any individual. We honor "Do Not Track" and Global Privacy Control browser signals.</p>
+          <p>We do not collect payment information, government IDs, or any sensitive personal data. We do not use tracking cookies, advertising pixels, cross-site tracking, or per-user behavioral profiling.</p>
         </section>
 
         <section class="privacy__section">
@@ -85,6 +86,7 @@
             <li>Stored with access restricted to authorized MQ Steel Corp personnel only</li>
             <li>Protected by Firestore security rules that prevent any public read or modification</li>
           </ul>
+          <p>The anonymous, aggregate visit counts described above are stored in this same Firestore database as plain per-day totals. Security rules make them readable only by authorized personnel, and they contain no personal data.</p>
           <p>Google's data center security practices apply to the underlying infrastructure. See Google's <a href="https://cloud.google.com/security" target="_blank" rel="noopener noreferrer">Cloud Security overview</a> for details.</p>
         </section>
 
@@ -107,8 +109,8 @@
             <tbody>
               <tr>
                 <td><a href="https://firebase.google.com" target="_blank" rel="noopener noreferrer">Google Firebase</a></td>
-                <td>Website hosting and form data storage</td>
-                <td>Form submission data, server request logs</td>
+                <td>Website hosting, form data storage, and anonymous aggregate visit counts</td>
+                <td>Form submission data; anonymous daily view/visit counts (no personal data); server request logs</td>
               </tr>
               <tr>
                 <td><a href="https://www.emailjs.com" target="_blank" rel="noopener noreferrer">EmailJS</a></td>
@@ -137,7 +139,7 @@
 
         <section class="privacy__section">
           <h2>7. Cookies</h2>
-          <p>This website does not use cookies for analytics, advertising, or user tracking. The reCAPTCHA service may set a session cookie as part of its bot-detection process. This cookie does not track your browsing activity across other websites.</p>
+          <p>This website does not use cookies for analytics, advertising, or user tracking. To avoid double-counting a single visit in our aggregate totals, the site stores one small flag in your browser's <strong>sessionStorage</strong> — this is not a cookie, is never sent to any server, holds no identifier, and is cleared automatically when you close the tab. The reCAPTCHA service may set a session cookie as part of its bot-detection process. This cookie does not track your browsing activity across other websites.</p>
         </section>
 
         <section class="privacy__section">

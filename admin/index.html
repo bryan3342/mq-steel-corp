@@ -152,12 +152,33 @@
           </article>
         </div>
 
-        <!-- Submission cadence -->
-        <section class="panel" id="cadence-panel">
-          <h3 class="panel__title">Submission cadence</h3>
-          <p class="panel__sub">Requests by day of week</p>
-          <div class="cadence"><canvas id="cadence-chart" aria-label="Requests by day of week"></canvas></div>
-        </section>
+        <!-- Visitor KPI row -->
+        <div class="kpi-row" id="visitor-row">
+          <article class="kpi">
+            <div class="kpi__head">
+              <span class="kpi__label">Site visits</span>
+              <span class="kpi__badge" id="kpi-visits-badge"></span>
+            </div>
+            <div class="kpi__value" id="kpi-visits">0</div>
+            <div class="kpi__note" id="kpi-visits-note">0 sessions</div>
+          </article>
+
+          <article class="kpi">
+            <div class="kpi__head">
+              <span class="kpi__label">Conversion rate</span>
+              <span class="kpi__badge" id="kpi-cvr-badge"></span>
+            </div>
+            <div class="kpi__value" id="kpi-cvr">—</div>
+            <div class="kpi__note" id="kpi-cvr-note">requests ÷ sessions</div>
+          </article>
+
+          <article class="kpi kpi--chart">
+            <div class="kpi__head">
+              <span class="kpi__label">Visits over time</span>
+            </div>
+            <div class="kpi__trend"><canvas id="visits-chart" aria-label="Visits over time"></canvas></div>
+          </article>
+        </div>
 
         <!-- Table + ranking -->
         <div class="dash-grid" id="dash-grid">

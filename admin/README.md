@@ -24,11 +24,13 @@ The public site and this admin portal are two Hosting **targets** in the repo's
 
 ## What the team can do
 
-- **Overview dashboard** — KPIs computed live from the submissions (no tracking, no
-  extra data source): percent **handled** (contacted or closed) with an open count, a
-  **total requests** count with a status-breakdown doughnut + legend, a **requests
-  over time** trend with a Daily / Weekly / Monthly toggle, a **submission cadence**
-  chart (requests by day of week), and a **top-companies** ranking.
+- **Overview dashboard** — KPIs computed live: percent **handled** (contacted or
+  closed) with an open count, a **total requests** count with a status-breakdown
+  doughnut + legend, a **requests over time** trend with a Daily / Weekly / Monthly
+  toggle, and a **top-companies** ranking.
+- **Visitor analytics** — anonymous, cookieless **site-visit** counts and a
+  **conversion rate** (requests ÷ sessions), over the same Daily / Weekly / Monthly
+  window (see "Visitor analytics" below).
 - **Requests** — a scannable data table (Requester / Company / Service / Status /
   Submitted); click a row to expand its full message and manage it (status + internal
   notes). Search/filter by status (All / New / Contacted / Closed). A live snapshot
@@ -36,6 +38,20 @@ The public site and this admin portal are two Hosting **targets** in the repo's
 - **Look & feel** — a **light / dark** theme toggle (bottom-right; remembered per
   browser via `localStorage`, defaults to the OS preference) and a **collapsible
   sidebar** (also remembered). Both honor `prefers-reduced-motion`.
+
+## Visitor analytics
+
+Site traffic is counted **anonymously and cookielessly** — no third-party analytics, no
+cookies, no personal data. `assets/js/analytics.js` (loaded on every public page)
+increments a per-day counter document `analytics_daily/{YYYY-MM-DD}` = `{ views, sessions }`
+in the same Firestore project; a `sessionStorage` flag de-dupes one "session" per browser
+tab. Firestore rules make these docs **admin-read-only** and lock each write to a +1
+increment of the two integers (no other field can ever be stored). The dashboard reads the
+last ~365 days once per sign-in. Disclosed in `privacy.html` (§2, §6, §7).
+
+**Opt a browser out** (e.g. staff machines): on the public site, run
+`localStorage.setItem('mq_analytics_optout', '1')` in the console. Bots, headless browsers,
+and `Do Not Track` / Global Privacy Control are already excluded.
 
 ## Managing admins (IT, on the terminal)
 
