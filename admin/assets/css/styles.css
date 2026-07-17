@@ -413,21 +413,19 @@ html, body {
 .rdetail__message { white-space: pre-wrap; line-height: 1.5; color: var(--ink); margin: .5rem 0 0; }
 .rdetail__controls { display: flex; gap: 1rem; flex-wrap: wrap; padding-top: .9rem; margin-top: .9rem; border-top: 1px solid var(--line); }
 
-/* ── Theme toggle (fixed, bottom-right of the dashboard) ──── */
+/* ── Theme toggle (in the sidebar, styled like a navlink) ──── */
 .theme-toggle {
-  position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 40;
-  width: 44px; height: 44px; border-radius: 50%;
-  display: grid; place-items: center;
-  background: var(--surface); color: var(--ink-soft);
-  border: 1px solid var(--line); box-shadow: var(--shadow); cursor: pointer;
-  transition: color var(--dur-fast) var(--ease-standard),
-              background-color var(--dur-fast) var(--ease-standard),
-              transform var(--dur-fast) var(--ease-standard);
+  display: flex; align-items: center; gap: .65rem; width: 100%; text-align: left;
+  margin-top: .5rem; padding: .6rem .7rem; border-radius: 8px; border: none; background: none;
+  font: inherit; font-size: .92rem; color: var(--ink-soft); cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard);
 }
-.theme-toggle:hover { color: var(--accent); transform: translateY(-1px); }
-.theme-toggle svg { display: none; }
+.theme-toggle:hover { background: var(--bg); color: var(--accent); }
+.theme-toggle svg { display: none; flex: none; }
 :root:not([data-theme="dark"]) .theme-toggle__moon { display: block; }
 :root[data-theme="dark"] .theme-toggle__sun { display: block; }
+.dash--collapsed .theme-toggle { justify-content: center; padding: .6rem 0; }
+.dash--collapsed .theme-toggle span { display: none; }
 
 /* ── Motion ──────────────────────────────────────────────── */
 @keyframes view-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -446,25 +444,66 @@ html, body {
               color var(--dur-med) var(--ease-standard);
 }
 
-/* ── Assistant chat panel ────────────────────────────────── */
-.assistant {
-  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-  box-shadow: var(--shadow); padding: 1.1rem 1.25rem;
-  display: flex; flex-direction: column; gap: 1rem;
-  height: calc(100vh - 3.6rem - 3rem);
+/* ── Flux — floating admin assistant ─────────────────────── */
+.flux { position: fixed; right: 1.5rem; bottom: 1.5rem; z-index: 60; }
+
+.flux__launcher {
+  width: 62px; height: 62px; border-radius: 50%; padding: 0; border: none; cursor: pointer;
+  background: var(--surface); box-shadow: 0 6px 20px rgba(0, 0, 0, .22);
+  position: relative; display: grid; place-items: center;
+  transition: transform var(--dur-fast) var(--ease-standard), box-shadow var(--dur-fast) var(--ease-standard);
 }
-.assistant__log {
-  flex: 1 1 auto; min-height: 0; overflow-y: auto;
-  display: flex; flex-direction: column; gap: .6rem;
-  padding-right: .25rem;
+.flux__launcher:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 10px 26px rgba(0, 0, 0, .28); }
+.flux__launcher img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+.flux.is-open .flux__launcher { transform: scale(.9); opacity: .85; }
+
+.flux__tooltip {
+  position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%);
+  background: var(--navy); color: #fff; padding: .35rem .6rem; border-radius: 8px;
+  font-size: .8rem; font-weight: 500; white-space: nowrap; pointer-events: none;
+  opacity: 0; transition: opacity var(--dur-fast) var(--ease-standard);
 }
-.assistant__form { display: flex; gap: .6rem; flex: none; }
-.assistant__form input {
-  flex: 1 1 auto; font: inherit; padding: .6rem .8rem;
-  border: 1px solid var(--line); border-radius: 8px;
+.flux__launcher:hover .flux__tooltip, .flux__launcher:focus-visible .flux__tooltip { opacity: 1; }
+.flux.is-open .flux__tooltip { display: none; }
+
+.flux__box {
+  position: absolute; right: 0; bottom: calc(62px + .85rem);
+  width: min(370px, calc(100vw - 3rem)); height: min(540px, calc(100vh - 9rem));
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .28); display: flex; flex-direction: column; overflow: hidden;
+  animation: view-in var(--dur-med) var(--ease-out);
+}
+.flux__header {
+  display: flex; align-items: center; gap: .6rem; padding: .7rem .85rem; flex: none;
+  background: var(--navy); color: #fff;
+}
+.flux__avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; background: #fff; flex: none; }
+.flux__title { font-weight: 600; font-size: .95rem; flex: 1 1 auto; }
+.flux__close {
+  border: none; background: none; color: #fff; opacity: .8; cursor: pointer;
+  display: grid; place-items: center; padding: 2px; border-radius: 6px;
+}
+.flux__close:hover { opacity: 1; background: rgba(255, 255, 255, .12); }
+.flux__log {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: .85rem;
+  display: flex; flex-direction: column; gap: .55rem;
+}
+.flux__prompts { display: flex; flex-direction: column; gap: .4rem; padding: 0 .85rem .6rem; flex: none; }
+.flux__chip {
+  text-align: left; font: inherit; font-size: .85rem; padding: .5rem .7rem;
+  background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-standard), background var(--dur-fast) var(--ease-standard);
+}
+.flux__chip:hover { border-color: var(--accent); background: var(--accent-soft); }
+.flux__form { display: flex; gap: .5rem; padding: .7rem .85rem; border-top: 1px solid var(--line); flex: none; }
+.flux__form input {
+  flex: 1 1 auto; font: inherit; padding: .55rem .7rem; border: 1px solid var(--line); border-radius: 8px;
   background: var(--surface); color: var(--ink);
 }
-.assistant__form input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.flux__form input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+@media (max-width: 520px) {
+  .flux__box { width: calc(100vw - 2rem); }
+}
 
 .msg {
   max-width: 80%; margin: 0; padding: .6rem .9rem; border-radius: 12px;

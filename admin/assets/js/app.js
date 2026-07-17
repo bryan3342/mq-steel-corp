@@ -348,13 +348,10 @@ function renderDashboard() {
 
 function setDashView(view) {
   const requestsOnly = view === 'requests';
-  const isAssistant = view === 'assistant';
-  el('kpi-row').hidden = requestsOnly || isAssistant;
-  el('visitor-row').hidden = requestsOnly || isAssistant;
+  el('kpi-row').hidden = requestsOnly;
+  el('visitor-row').hidden = requestsOnly;
   el('ranking-panel').hidden = requestsOnly;
   el('dash-grid').classList.toggle('dash-grid--full', requestsOnly);
-  el('dash-grid').hidden = isAssistant;
-  el('assistant-panel').hidden = !isAssistant;
 }
 
 // ─── Metrics ─────────────────────────────────────────────────────────────────

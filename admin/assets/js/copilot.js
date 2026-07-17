@@ -3,12 +3,6 @@ import { getToken } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app
 import { loadMemory } from './memory.js';
 import { redact } from './redact.js';
 
-// v1 scope: this module only wires the CHAT path (read memory → ask the Worker →
-// render the reply). Auto-enrichment of companyMemory (upsertRequestEntries,
-// saveInsight, savePatterns from memory.js) is a deliberate follow-up — a
-// "Refresh insights" action wired to those functions is not built here.
-
-// OWNER TODO: replace with the real Worker URL once deployed (see Task 9).
 const WORKER_URL = 'https://mq-steel-assistant.bryanmejiaeducation.workers.dev/chat';
 
 const el = (id) => document.getElementById(id);
@@ -28,11 +22,21 @@ async function authHeaders() {
   return { Authorization: `Bearer ${idToken}`, 'X-Firebase-AppCheck': ac.token, 'content-type': 'application/json' };
 }
 
-// window.__getSubmissions is a tiny read accessor exposed by app.js (step 4).
+// Short description of the console so Flux can help with navigation. Sent as context
+// (no PII). window.__getSubmissions is a read-only accessor exposed by app.js.
+const CONSOLE_GUIDE =
+  'You are Flux, the friendly MQ Steel Corp admin assistant, embedded in the admin dashboard. ' +
+  'The console has: an Overview view (KPIs — handled %, total requests with a status donut, ' +
+  'requests-over-time, plus site visits and conversion rate); a Requests view (a searchable table ' +
+  'with status tabs All/New/Contacted/Closed, a per-request status selector, and internal notes); a ' +
+  'collapsible left sidebar to switch views; and a light/dark theme toggle at the bottom of the sidebar. ' +
+  'A request that has "not been attended to" is one whose status is still "new".';
+
 async function buildContext() {
   const subs = (window.__getSubmissions?.() || []);
   const mem = await loadMemory().catch(() => ({ fact: [], insight: [], pattern: [], request: [] }));
   return {
+    about: CONSOLE_GUIDE,
     facts: mem.fact.map((f) => f.text),
     insights: mem.insight.map((i) => i.text),
     patterns: mem.pattern.map((p) => p.text),
@@ -56,13 +60,45 @@ async function ask(question) {
   } catch { thinking.remove(); bubble('assistant', 'Network problem — please retry.'); }
 }
 
+// ── Widget open / close ──────────────────────────────────────────────────────
+let introShown = false;
+function openFlux() {
+  const box = el('flux-box'); if (!box) return;
+  box.hidden = false;
+  el('flux')?.classList.add('is-open');
+  el('flux-launcher')?.setAttribute('aria-expanded', 'true');
+  if (!introShown) {
+    introShown = true;
+    bubble('assistant', "Hi, I'm Flux — the MQ Steel Admin Assistant. I can summarize your requests, flag what still needs attention, and help you find your way around. Pick a prompt below or just ask.");
+  }
+  el('assistant-input')?.focus();
+}
+function closeFlux() {
+  const box = el('flux-box'); if (!box) return;
+  box.hidden = true;
+  el('flux')?.classList.remove('is-open');
+  el('flux-launcher')?.setAttribute('aria-expanded', 'false');
+}
+
 export function initCopilot() {
-  const form = el('assistant-form'); if (!form) return;
+  const form = el('assistant-form');
+  const launcher = el('flux-launcher');
+  if (!form || !launcher) return;
+
+  launcher.addEventListener('click', () => (el('flux-box').hidden ? openFlux() : closeFlux()));
+  el('flux-close')?.addEventListener('click', closeFlux);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !el('flux-box')?.hidden) closeFlux();
+  });
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const q = el('assistant-input').value.trim(); if (!q) return;
     el('assistant-input').value = '';
     ask(q);
   });
+
+  el('flux-prompts')?.querySelectorAll('.flux__chip').forEach((chip) =>
+    chip.addEventListener('click', () => ask(chip.textContent.trim())));
 }
 initCopilot();
