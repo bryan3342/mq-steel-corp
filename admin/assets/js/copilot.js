@@ -29,7 +29,7 @@ const CONSOLE_GUIDE =
   'The console has: an Overview view (KPIs — handled %, total requests with a status donut, ' +
   'requests-over-time, plus site visits and conversion rate); a Requests view (a searchable table ' +
   'with status tabs All/New/Contacted/Closed, a per-request status selector, and internal notes); a ' +
-  'collapsible left sidebar to switch views; and a light/dark theme toggle at the bottom of the sidebar. ' +
+  'collapsible left sidebar to switch views (with a "Flux" item that opens this chat); and a light/dark theme toggle in the sidebar. ' +
   'A request that has "not been attended to" is one whose status is still "new".';
 
 async function buildContext() {
@@ -66,7 +66,9 @@ function openFlux() {
   const box = el('flux-box'); if (!box) return;
   box.hidden = false;
   el('flux')?.classList.add('is-open');
-  el('flux-launcher')?.setAttribute('aria-expanded', 'true');
+  const opener = el('flux-open');
+  opener?.classList.add('is-active');
+  opener?.setAttribute('aria-expanded', 'true');
   if (!introShown) {
     introShown = true;
     bubble('assistant', "Hi, I'm Flux — the MQ Steel Admin Assistant. I can summarize your requests, flag what still needs attention, and help you find your way around. Pick a prompt below or just ask.");
@@ -77,15 +79,17 @@ function closeFlux() {
   const box = el('flux-box'); if (!box) return;
   box.hidden = true;
   el('flux')?.classList.remove('is-open');
-  el('flux-launcher')?.setAttribute('aria-expanded', 'false');
+  const opener = el('flux-open');
+  opener?.classList.remove('is-active');
+  opener?.setAttribute('aria-expanded', 'false');
 }
 
 export function initCopilot() {
   const form = el('assistant-form');
-  const launcher = el('flux-launcher');
-  if (!form || !launcher) return;
+  const opener = el('flux-open');
+  if (!form || !opener) return;
 
-  launcher.addEventListener('click', () => (el('flux-box').hidden ? openFlux() : closeFlux()));
+  opener.addEventListener('click', () => (el('flux-box').hidden ? openFlux() : closeFlux()));
   el('flux-close')?.addEventListener('click', closeFlux);
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !el('flux-box')?.hidden) closeFlux();

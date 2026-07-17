@@ -909,8 +909,8 @@ el('granularity').addEventListener('click', (e) => {
 
 el('dash-nav').addEventListener('click', (e) => {
   const btn = e.target.closest('.navlink');
-  if (!btn) return;
-  el('dash-nav').querySelectorAll('.navlink').forEach((n) => n.classList.toggle('is-active', n === btn));
+  if (!btn || !btn.dataset.view) return;   // Flux (and other non-view navlinks) handle their own click
+  el('dash-nav').querySelectorAll('.navlink[data-view]').forEach((n) => n.classList.toggle('is-active', n === btn));
   setDashView(btn.dataset.view);
 });
 

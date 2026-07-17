@@ -444,30 +444,13 @@ html, body {
               color var(--dur-med) var(--ease-standard);
 }
 
-/* ── Flux — floating admin assistant ─────────────────────── */
-.flux { position: fixed; right: 1.5rem; bottom: 1.5rem; z-index: 60; }
+/* ── Flux — chat popup opened from the sidebar "Flux" item ─── */
+.navlink__img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; flex: none; }
 
-.flux__launcher {
-  width: 62px; height: 62px; border-radius: 50%; padding: 0; border: none; cursor: pointer;
-  background: var(--surface); box-shadow: 0 6px 20px rgba(0, 0, 0, .22);
-  position: relative; display: grid; place-items: center;
-  transition: transform var(--dur-fast) var(--ease-standard), box-shadow var(--dur-fast) var(--ease-standard);
-}
-.flux__launcher:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 10px 26px rgba(0, 0, 0, .28); }
-.flux__launcher img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
-.flux.is-open .flux__launcher { transform: scale(.9); opacity: .85; }
-
-.flux__tooltip {
-  position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%);
-  background: var(--navy); color: #fff; padding: .35rem .6rem; border-radius: 8px;
-  font-size: .8rem; font-weight: 500; white-space: nowrap; pointer-events: none;
-  opacity: 0; transition: opacity var(--dur-fast) var(--ease-standard);
-}
-.flux__launcher:hover .flux__tooltip, .flux__launcher:focus-visible .flux__tooltip { opacity: 1; }
-.flux.is-open .flux__tooltip { display: none; }
+.flux { position: fixed; right: 1.5rem; bottom: 1.5rem; z-index: 60; pointer-events: none; }
 
 .flux__box {
-  position: absolute; right: 0; bottom: calc(62px + .85rem);
+  pointer-events: auto;
   width: min(370px, calc(100vw - 3rem)); height: min(540px, calc(100vh - 9rem));
   background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, .28); display: flex; flex-direction: column; overflow: hidden;
