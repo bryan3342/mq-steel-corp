@@ -15,6 +15,7 @@ async function verifyIdToken(token, projectId) {
   const { payload } = await jwtVerify(token, idJwks, {
     issuer: `https://securetoken.google.com/${projectId}`,
     audience: projectId,
+    algorithms: ['RS256'],
   });
   if (payload.email_verified !== true) throw new HttpError(403, 'email not verified');
   if (!payload.email) throw new HttpError(403, 'no email');
@@ -25,6 +26,7 @@ async function verifyAppCheck(token, projectId) {
   await jwtVerify(token, acJwks, {
     issuer: `https://firebaseappcheck.googleapis.com/${PROJECT_NUMBER}`,
     audience: [`projects/${PROJECT_NUMBER}`, `projects/${projectId}`],
+    algorithms: ['RS256'],
   });
 }
 

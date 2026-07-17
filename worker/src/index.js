@@ -29,11 +29,16 @@ export default {
     let admin;
     try { admin = await verifyAdmin(req, env); }
     catch (e) { return j({ error: e.message || 'unauthorized' }, e.status || 401, ch); }
-    // Rate limit: 30 requests / 5 min per admin.
-    const bucket = `rl:${admin.email}:${Math.floor(Date.now() / 300000)}`;
-    const count = Number((await env.RATE.get(bucket)) || '0') + 1;
-    if (count > 30) return j({ error: 'rate limited, slow down' }, 429, ch);
-    await env.RATE.put(bucket, String(count), { expirationTtl: 360 });
+    // Rate limit: 30 requests / 5 min per admin. This is a soft abuse guard for
+    // already-authenticated admins, so a KV outage must fail OPEN, not lock them out.
+    try {
+      const bucket = `rl:${admin.email}:${Math.floor(Date.now() / 300000)}`;
+      const count = Number((await env.RATE.get(bucket)) || '0') + 1;
+      if (count > 30) return j({ error: 'rate limited, slow down' }, 429, ch);
+      await env.RATE.put(bucket, String(count), { expirationTtl: 360 });
+    } catch (e) {
+      console.error('rate-limit KV error:', e?.message ?? e);
+    }
     try {
       const body = await req.json();
       const text = await callModel(env, { system: SYSTEM, messages: buildMessages(body) });
