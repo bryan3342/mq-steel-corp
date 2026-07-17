@@ -25,10 +25,15 @@ export default {
     const url = new URL(req.url);
     if (req.method !== 'POST' || url.pathname !== '/chat') return j({ error: 'not found' }, 404, ch);
     if (!_ok) return j({ error: 'origin not allowed' }, 403, ch);
-    // TODO(Task 4): rate limit. TODO(Task 5): real prompt.
+    // TODO(Task 5): real prompt.
     let admin;
     try { admin = await verifyAdmin(req, env); }
     catch (e) { return j({ error: e.message || 'unauthorized' }, e.status || 401, ch); }
+    // Rate limit: 30 requests / 5 min per admin.
+    const bucket = `rl:${admin.email}:${Math.floor(Date.now() / 300000)}`;
+    const count = Number((await env.RATE.get(bucket)) || '0') + 1;
+    if (count > 30) return j({ error: 'rate limited, slow down' }, 429, ch);
+    await env.RATE.put(bucket, String(count), { expirationTtl: 360 });
     try {
       const body = await req.json();
       const text = await callModel(env, {
