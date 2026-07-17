@@ -1,5 +1,6 @@
 import { callModel } from './model.js';
 import { verifyAdmin, HttpError } from './verify.js';
+import { SYSTEM, buildMessages } from './prompt.js';
 
 const j = (obj, status = 200, cors = {}) =>
   new Response(JSON.stringify(obj), { status, headers: { 'content-type': 'application/json', ...cors } });
@@ -25,7 +26,6 @@ export default {
     const url = new URL(req.url);
     if (req.method !== 'POST' || url.pathname !== '/chat') return j({ error: 'not found' }, 404, ch);
     if (!_ok) return j({ error: 'origin not allowed' }, 403, ch);
-    // TODO(Task 5): real prompt.
     let admin;
     try { admin = await verifyAdmin(req, env); }
     catch (e) { return j({ error: e.message || 'unauthorized' }, e.status || 401, ch); }
@@ -36,12 +36,10 @@ export default {
     await env.RATE.put(bucket, String(count), { expirationTtl: 360 });
     try {
       const body = await req.json();
-      const text = await callModel(env, {
-        system: 'You are a helpful assistant.',
-        messages: [{ role: 'user', content: String(body.question || '') }],
-      });
+      const text = await callModel(env, { system: SYSTEM, messages: buildMessages(body) });
       return j({ text }, 200, ch);
     } catch (e) {
+      console.error('chat error:', e?.message ?? e);
       return j({ error: 'server error' }, 500, ch);
     }
   },
