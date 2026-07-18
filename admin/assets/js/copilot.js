@@ -83,9 +83,12 @@ const history = [];
 async function ask(question) {
   el('flux-prompts')?.remove();          // quick prompts disappear after the first use (chip click or typed message)
   bubble('user', question);
-  const thinking = document.createElement('p');
-  thinking.className = 'msg msg--assistant is-thinking'; thinking.textContent = '…';
+  const thinking = document.createElement('div');
+  thinking.className = 'msg msg--assistant is-thinking';
+  thinking.setAttribute('aria-label', 'Flux is thinking');
+  for (let i = 0; i < 3; i++) { const d = document.createElement('span'); d.className = 'dot'; thinking.append(d); }
   log().append(thinking);
+  log().scrollTop = log().scrollHeight;
   try {
     const context = await buildContext();
     const res = await fetch(WORKER_URL, { method: 'POST', headers: await authHeaders(),
@@ -99,43 +102,27 @@ async function ask(question) {
   } catch { thinking.remove(); bubble('assistant', 'Network problem — please retry.'); }
 }
 
-// ── Widget open / close ──────────────────────────────────────────────────────
-// Anchor the chat bubble beside the sidebar "Flux" button so it opens "from" it.
-function positionBox() {
-  const box = el('flux-box'), opener = el('flux-open');
-  if (!box || !opener || box.hidden) return;
-  const r = opener.getBoundingClientRect();
-  const w = box.offsetWidth, h = box.offsetHeight;
-  let left = r.right + 14;
-  if (left + w > window.innerWidth - 12) left = Math.max(12, r.left - w - 14);
-  let top = Math.min(r.top, window.innerHeight - h - 12);
-  if (top < 12) top = 12;
-  box.style.left = `${left}px`;
-  box.style.top = `${top}px`;
-}
-
+// ── Widget open / close (right-side drawer) ──────────────────────────────────
+const isOpen = () => el('flux')?.classList.contains('is-open');
 let introShown = false;
+
 function openFlux() {
-  const box = el('flux-box'); if (!box) return;
-  box.hidden = false;
-  positionBox();
-  el('flux')?.classList.add('is-open');
-  const opener = el('flux-open');
-  opener?.classList.add('is-active');
-  opener?.setAttribute('aria-expanded', 'true');
+  const root = el('flux'); if (!root) return;
+  root.classList.add('is-open');
+  el('flux-open')?.setAttribute('aria-expanded', 'true');
+  el('flux-box')?.setAttribute('aria-hidden', 'false');
   if (!introShown) {
     introShown = true;
     bubble('assistant', "Hi, I'm Flux — the MQ Steel Admin Assistant. I can summarize your requests, flag what still needs attention, and help you find your way around. Pick a prompt below or just ask.");
   }
-  el('assistant-input')?.focus();
+  setTimeout(() => el('assistant-input')?.focus(), 140);   // focus once the drawer has slid in
 }
 function closeFlux() {
-  const box = el('flux-box'); if (!box) return;
-  box.hidden = true;
-  el('flux')?.classList.remove('is-open');
-  const opener = el('flux-open');
-  opener?.classList.remove('is-active');
-  opener?.setAttribute('aria-expanded', 'false');
+  const root = el('flux'); if (!root) return;
+  root.classList.remove('is-open');
+  el('flux-open')?.setAttribute('aria-expanded', 'false');
+  el('flux-box')?.setAttribute('aria-hidden', 'true');
+  el('flux-open')?.focus();
 }
 
 export function initCopilot() {
@@ -143,12 +130,10 @@ export function initCopilot() {
   const opener = el('flux-open');
   if (!form || !opener) return;
 
-  opener.addEventListener('click', () => (el('flux-box').hidden ? openFlux() : closeFlux()));
+  opener.addEventListener('click', () => (isOpen() ? closeFlux() : openFlux()));
   el('flux-close')?.addEventListener('click', closeFlux);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !el('flux-box')?.hidden) closeFlux();
-  });
-  window.addEventListener('resize', () => positionBox());
+  el('flux-scrim')?.addEventListener('click', closeFlux);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen()) closeFlux(); });
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
