@@ -491,14 +491,21 @@ html, body {
   transition: border-color var(--dur-fast) var(--ease-standard), background var(--dur-fast) var(--ease-standard);
 }
 .flux__chip:hover { border-color: var(--accent); background: var(--accent-soft); }
-.flux__form { display: flex; gap: .5rem; padding: .75rem 1rem; border-top: 1px solid var(--line); flex: none; }
+.flux__form { display: flex; gap: .5rem; align-items: center; padding: .8rem 1rem; border-top: 1px solid var(--line); flex: none; }
 .flux__form input {
   flex: 1 1 auto; min-width: 0;                 /* min-width:0 lets the input shrink so "Send" stays inside */
-  font: inherit; padding: .55rem .7rem; border: 1px solid var(--line); border-radius: 8px;
+  font: inherit; padding: .62rem .95rem; border: 1px solid var(--line); border-radius: 999px;
   background: var(--bg); color: var(--ink);
+  transition: border-color var(--dur-fast) var(--ease-standard), box-shadow var(--dur-fast) var(--ease-standard);
 }
-.flux__form input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-.flux__form .btn { flex: none; }
+.flux__form input::placeholder { color: var(--steel); }
+.flux__form input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.flux__form .btn {
+  flex: none; border: none; cursor: pointer; border-radius: 999px; padding: .6rem 1.15rem; font-weight: 600;
+  background: var(--accent); color: #fff;
+  transition: filter var(--dur-fast) var(--ease-standard);
+}
+.flux__form .btn:hover { filter: brightness(.94); }
 
 .msg {
   max-width: 85%; margin: 0; padding: .55rem .85rem; border-radius: 12px;
