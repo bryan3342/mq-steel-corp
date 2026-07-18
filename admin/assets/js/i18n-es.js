@@ -106,6 +106,8 @@ export const ES = {
   "Delete": "Eliminar",
   "Request deleted.": "Solicitud eliminada.",
   "Could not delete the request.": "No se pudo eliminar la solicitud.",
+  "Delete request?": "¿Eliminar solicitud?",
+  "This permanently deletes the request and can't be undone.": "Esto elimina la solicitud de forma permanente y no se puede deshacer.",
   "Incorrect email or password.": "Correo o contraseña incorrectos.",
   "No account found — contact IT to get access.": "No se encontró la cuenta — comunícate con TI para obtener acceso.",
   "That email address looks invalid.": "Esa dirección de correo parece no ser válida.",

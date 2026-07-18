@@ -657,3 +657,24 @@ html, body {
 .rdetail__danger { margin-top: .9rem; display: flex; justify-content: flex-end; align-items: center; gap: .5rem; flex-wrap: wrap; }
 .rdetail__confirm { display: inline-flex; align-items: center; gap: .5rem; flex-wrap: wrap; justify-content: flex-end; }
 .rdetail__confirm-msg { font-size: .85rem; color: var(--ink-soft); }
+
+/* ── Confirm modal (warning popup) ───────────────────────────── */
+.modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.modal[hidden] { display: none; }
+.modal__scrim { position: absolute; inset: 0; background: rgba(15, 23, 42, .5); }
+.modal__box {
+  position: relative; z-index: 1; width: min(400px, 100%);
+  background: var(--surface); border-radius: 14px; box-shadow: 0 24px 60px rgba(0, 0, 0, .32);
+  padding: 1.6rem 1.5rem; text-align: center; animation: modal-in var(--dur-med) var(--ease-out);
+}
+@keyframes modal-in { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
+.modal__box--warn { border-top: 4px solid var(--danger); }
+.modal__icon {
+  width: 48px; height: 48px; margin: 0 auto .9rem; border-radius: 50%;
+  display: grid; place-items: center; background: rgba(220, 38, 38, .12); color: var(--danger);
+}
+.modal__title { font-family: 'Oswald', sans-serif; font-size: 1.25rem; margin: 0 0 .45rem; color: var(--ink); }
+.modal__desc { font-size: .9rem; color: var(--ink-soft); margin: 0 0 1.3rem; line-height: 1.5; }
+.modal__actions { display: flex; gap: .6rem; justify-content: center; }
+.modal__actions .btn { min-width: 104px; }
+@media (prefers-reduced-motion: reduce) { .modal__box { animation: none; } }

@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
   <!-- Pre-paint theme bootstrap (must be a same-origin file — the admin CSP forbids inline scripts) -->
-  <script src="assets/js/theme-boot.js?v=11"></script>
-  <link rel="stylesheet" href="assets/css/styles.css?v=11">
+  <script src="assets/js/theme-boot.js?v=12"></script>
+  <link rel="stylesheet" href="assets/css/styles.css?v=12">
 </head>
 <body>
 
@@ -323,14 +323,30 @@
 
   </main>
 
+  <!-- Delete confirmation (warning popup) -->
+  <div class="modal" id="confirm-modal" hidden>
+    <div class="modal__scrim" data-confirm-close></div>
+    <div class="modal__box modal__box--warn" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-desc">
+      <div class="modal__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <h2 class="modal__title" id="confirm-title">Delete request?</h2>
+      <p class="modal__desc" id="confirm-desc">This permanently deletes the request and can't be undone.</p>
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost" data-confirm-close>Cancel</button>
+        <button type="button" class="btn btn--danger" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
   <!-- Vendored, pure-JS docx libs (CSP-safe: no eval/WASM). Attach window.PizZip + window.docxtemplater. -->
-  <script src="assets/vendor/pizzip.min.js?v=11"></script>
-  <script src="assets/vendor/docxtemplater.min.js?v=11"></script>
-  <script type="module" src="assets/js/app.js?v=11"></script>
-  <script type="module" src="assets/js/copilot.js?v=11"></script>
-  <script type="module" src="assets/js/documents.js?v=11"></script>
+  <script src="assets/vendor/pizzip.min.js?v=12"></script>
+  <script src="assets/vendor/docxtemplater.min.js?v=12"></script>
+  <script type="module" src="assets/js/app.js?v=12"></script>
+  <script type="module" src="assets/js/copilot.js?v=12"></script>
+  <script type="module" src="assets/js/documents.js?v=12"></script>
 </body>
 </html>

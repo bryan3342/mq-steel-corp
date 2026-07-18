@@ -159,6 +159,44 @@ function toast(msg, isError = false) {
   toastTimer = setTimeout(() => t.classList.remove('toast--show'), 2800);
 }
 
+// ─── Delete-request confirm modal (warning popup) ────────────────────────────
+let pendingDeleteId = null;
+function openConfirmDelete(id) {
+  pendingDeleteId = id;
+  el('confirm-modal').hidden = false;
+  const btn = el('confirm-delete-btn');
+  btn.disabled = false;
+  btn.focus();
+}
+function closeConfirmDelete() {
+  el('confirm-modal').hidden = true;
+  pendingDeleteId = null;
+}
+async function performDelete() {
+  const id = pendingDeleteId;
+  if (!id) return;
+  if (DEMO) {
+    submissionsCache = submissionsCache.filter((x) => x.id !== id);
+    expanded.delete(id);
+    closeConfirmDelete();
+    renderDashboard();
+    toast('Demo mode — change not saved.');
+    return;
+  }
+  const btn = el('confirm-delete-btn');
+  btn.disabled = true;
+  try {
+    await deleteDoc(doc(db, 'submissions', id));
+    expanded.delete(id);
+    closeConfirmDelete();
+    toast('Request deleted.');   // onSnapshot removes the row + refreshes all metrics
+  } catch (err) {
+    console.error('delete-request:', err?.code ?? 'unknown');
+    toast('Could not delete the request.', true);
+    btn.disabled = false;
+  }
+}
+
 function showMsg(text, isError = false) {
   const m = el('signin-msg');
   m.textContent = text;
@@ -872,7 +910,7 @@ function renderRow(s) {
 
   controls.append(statusField, notesField);
 
-  // Delete (destructive) — guarded by an inline confirm step. On success the
+  // Delete (destructive) — opens a warning confirm modal. On confirm the
   // onSnapshot listener drops the row and refreshes every metric and chart.
   const danger = document.createElement('div');
   danger.className = 'rdetail__danger';
@@ -880,38 +918,8 @@ function renderRow(s) {
   delBtn.type = 'button';
   delBtn.className = 'btn btn--small btn--danger';
   delBtn.textContent = tr('Delete request');
-  const confirmWrap = document.createElement('span');
-  confirmWrap.className = 'rdetail__confirm is-hidden';
-  const confirmMsg = document.createElement('span');
-  confirmMsg.className = 'rdetail__confirm-msg';
-  confirmMsg.textContent = tr("Delete this request? This can't be undone.");
-  const cancelBtn = document.createElement('button');
-  cancelBtn.type = 'button'; cancelBtn.className = 'btn btn--small btn--ghost'; cancelBtn.textContent = tr('Cancel');
-  const confirmBtn = document.createElement('button');
-  confirmBtn.type = 'button'; confirmBtn.className = 'btn btn--small btn--danger'; confirmBtn.textContent = tr('Delete');
-  delBtn.addEventListener('click', () => { delBtn.classList.add('is-hidden'); confirmWrap.classList.remove('is-hidden'); });
-  cancelBtn.addEventListener('click', () => { confirmWrap.classList.add('is-hidden'); delBtn.classList.remove('is-hidden'); });
-  confirmBtn.addEventListener('click', async () => {
-    if (DEMO) {
-      submissionsCache = submissionsCache.filter((x) => x.id !== s.id);
-      expanded.delete(s.id);
-      renderDashboard();
-      toast('Demo mode — change not saved.');
-      return;
-    }
-    confirmBtn.disabled = true; cancelBtn.disabled = true;
-    try {
-      await deleteDoc(doc(db, 'submissions', s.id));
-      expanded.delete(s.id);
-      toast('Request deleted.');   // onSnapshot removes the row + refreshes all metrics
-    } catch (err) {
-      console.error('delete-request:', err?.code ?? 'unknown');
-      toast('Could not delete the request.', true);
-      confirmBtn.disabled = false; cancelBtn.disabled = false;
-    }
-  });
-  confirmWrap.append(confirmMsg, cancelBtn, confirmBtn);
-  danger.append(delBtn, confirmWrap);
+  delBtn.addEventListener('click', () => openConfirmDelete(s.id));
+  danger.append(delBtn);
 
   detail.append(contact, msg, controls, danger);
 
@@ -967,6 +975,11 @@ wireSidebar();
 // Re-render the dynamic dashboard (table, status labels, charts, KPI notes) when
 // the language changes; static chrome is handled by i18n's TreeWalker.
 onLangChange(() => { if (!el('app-view').hidden && latestMetrics) renderDashboard(); });
+
+// Confirm-delete modal wiring (buttons live in the static markup, wired once).
+el('confirm-delete-btn').addEventListener('click', performDelete);
+document.querySelectorAll('#confirm-modal [data-confirm-close]').forEach((b) => b.addEventListener('click', closeConfirmDelete));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !el('confirm-modal').hidden) closeConfirmDelete(); });
 
 if (DEMO) {
   startDemo();
