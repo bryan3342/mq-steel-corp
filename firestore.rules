@@ -54,7 +54,8 @@ service cloud.firestore {
         && (!('adminNotes' in request.resource.data)
             || (request.resource.data.adminNotes is string
                 && request.resource.data.adminNotes.size() <= 5000));
-      allow delete: if false;
+      // Admins may delete a request outright (portal has a confirm step).
+      allow delete: if isAdmin();
     }
 
     // Admin allowlist. A signed-in user may read ONLY their own doc — even before their

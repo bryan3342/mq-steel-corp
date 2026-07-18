@@ -6,7 +6,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 import {
   collection, query, orderBy, onSnapshot, doc, getDoc, getDocs, where, documentId,
-  updateDoc, serverTimestamp,
+  updateDoc, deleteDoc, serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const STATUSES = ['new', 'contacted', 'closed'];
@@ -871,7 +871,49 @@ function renderRow(s) {
   notesField.append(notes, saveNote);
 
   controls.append(statusField, notesField);
-  detail.append(contact, msg, controls);
+
+  // Delete (destructive) — guarded by an inline confirm step. On success the
+  // onSnapshot listener drops the row and refreshes every metric and chart.
+  const danger = document.createElement('div');
+  danger.className = 'rdetail__danger';
+  const delBtn = document.createElement('button');
+  delBtn.type = 'button';
+  delBtn.className = 'btn btn--small btn--danger';
+  delBtn.textContent = tr('Delete request');
+  const confirmWrap = document.createElement('span');
+  confirmWrap.className = 'rdetail__confirm is-hidden';
+  const confirmMsg = document.createElement('span');
+  confirmMsg.className = 'rdetail__confirm-msg';
+  confirmMsg.textContent = tr("Delete this request? This can't be undone.");
+  const cancelBtn = document.createElement('button');
+  cancelBtn.type = 'button'; cancelBtn.className = 'btn btn--small btn--ghost'; cancelBtn.textContent = tr('Cancel');
+  const confirmBtn = document.createElement('button');
+  confirmBtn.type = 'button'; confirmBtn.className = 'btn btn--small btn--danger'; confirmBtn.textContent = tr('Delete');
+  delBtn.addEventListener('click', () => { delBtn.classList.add('is-hidden'); confirmWrap.classList.remove('is-hidden'); });
+  cancelBtn.addEventListener('click', () => { confirmWrap.classList.add('is-hidden'); delBtn.classList.remove('is-hidden'); });
+  confirmBtn.addEventListener('click', async () => {
+    if (DEMO) {
+      submissionsCache = submissionsCache.filter((x) => x.id !== s.id);
+      expanded.delete(s.id);
+      renderDashboard();
+      toast('Demo mode — change not saved.');
+      return;
+    }
+    confirmBtn.disabled = true; cancelBtn.disabled = true;
+    try {
+      await deleteDoc(doc(db, 'submissions', s.id));
+      expanded.delete(s.id);
+      toast('Request deleted.');   // onSnapshot removes the row + refreshes all metrics
+    } catch (err) {
+      console.error('delete-request:', err?.code ?? 'unknown');
+      toast('Could not delete the request.', true);
+      confirmBtn.disabled = false; cancelBtn.disabled = false;
+    }
+  });
+  confirmWrap.append(confirmMsg, cancelBtn, confirmBtn);
+  danger.append(delBtn, confirmWrap);
+
+  detail.append(contact, msg, controls, danger);
 
   rowBtn.addEventListener('click', () => {
     const nowOpen = !expanded.has(s.id);

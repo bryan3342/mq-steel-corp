@@ -649,3 +649,11 @@ html, body {
 .lang-toggle:hover { background: rgba(255, 255, 255, .1); opacity: 1; }
 .lang-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .lang-toggle svg { flex: none; }
+
+/* ── Delete request (destructive, with inline confirm) ───────── */
+.is-hidden { display: none !important; }
+.btn--danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+.btn--danger:hover:not(:disabled) { filter: brightness(.92); }
+.rdetail__danger { margin-top: .9rem; display: flex; justify-content: flex-end; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.rdetail__confirm { display: inline-flex; align-items: center; gap: .5rem; flex-wrap: wrap; justify-content: flex-end; }
+.rdetail__confirm-msg { font-size: .85rem; color: var(--ink-soft); }
