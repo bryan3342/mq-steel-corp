@@ -1,6 +1,6 @@
 import { callModel } from './model.js';
 import { verifyAdmin, HttpError } from './verify.js';
-import { SYSTEM, buildMessages } from './prompt.js';
+import { SYSTEM, buildSystem, buildMessages } from './prompt.js';
 
 const j = (obj, status = 200, cors = {}) =>
   new Response(JSON.stringify(obj), { status, headers: { 'content-type': 'application/json', ...cors } });
@@ -41,7 +41,10 @@ export default {
     }
     try {
       const body = await req.json();
-      const text = await callModel(env, { system: SYSTEM, messages: buildMessages(body) });
+      // Chat: data goes in the system message so the message list can carry the conversation.
+      // Analyze: keep the legacy single-message shape (context in the user message).
+      const system = body.mode === 'analyze' ? SYSTEM : buildSystem(body.context);
+      const text = await callModel(env, { system, messages: buildMessages(body) });
       return j({ text }, 200, ch);
     } catch (e) {
       console.error('chat error:', e?.message ?? e);

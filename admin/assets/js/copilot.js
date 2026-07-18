@@ -1,7 +1,7 @@
 import { auth, appCheck } from './firebase-config.js';
 import { getToken } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app-check.js';
 import { loadMemory } from './memory.js';
-import { redact } from './redact.js';
+import { redact, scrubText } from './redact.js';
 
 const WORKER_URL = 'https://mq-steel-assistant.bryanmejiaeducation.workers.dev/chat';
 
@@ -32,17 +32,53 @@ const CONSOLE_GUIDE =
   'collapsible left sidebar to switch views (with a "Flux" item that opens this chat); and a light/dark theme toggle in the sidebar. ' +
   'A request that has "not been attended to" is one whose status is still "new".';
 
+// Local YYYY-MM-DD (not UTC) so "today" matches how the console shows dates.
+const ymd = (d) => { const p = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
+const subDate = (s) => s?.submittedAt?.toDate?.() ?? (s?.submittedAt ? new Date(s.submittedAt) : null);
+
+// Precompute the aggregates a small model can't reliably derive by eyeballing raw
+// rows (counts, today/this-week, unattended list, top companies). All fields here
+// are non-PII: counts plus company/status/date only.
+function computeStats(subs) {
+  const now = new Date();
+  const day0 = new Date(now); day0.setHours(0, 0, 0, 0);
+  const week0 = new Date(day0); week0.setDate(week0.getDate() - 6);   // trailing 7 days incl. today
+  const byStatus = { new: 0, contacted: 0, closed: 0 };
+  const byCompany = {};
+  const unattended = [];
+  let today = 0, thisWeek = 0;
+  for (const s of subs) {
+    const st = (s.status || 'new').toLowerCase();
+    byStatus[st] = (byStatus[st] || 0) + 1;
+    const d = subDate(s);
+    if (d) { if (d >= day0) today++; if (d >= week0) thisWeek++; }
+    const comp = (s.company || '').trim();
+    if (comp) byCompany[comp] = (byCompany[comp] || 0) + 1;
+    if (st === 'new') unattended.push({ company: comp || '(no company)', service: scrubText(s.service || '').slice(0, 90), date: d ? ymd(d) : null });
+  }
+  unattended.sort((a, b) => (a.date || '').localeCompare(b.date || ''));   // oldest first
+  const topCompanies = Object.entries(byCompany).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([name, count]) => ({ name, count }));
+  return { total: subs.length, byStatus, today, thisWeek, unattendedCount: byStatus.new || 0, unattended: unattended.slice(0, 30), topCompanies };
+}
+
 async function buildContext() {
   const subs = (window.__getSubmissions?.() || []);
   const mem = await loadMemory().catch(() => ({ fact: [], insight: [], pattern: [], request: [] }));
+  const now = new Date();
   return {
+    today: ymd(now),
+    now: now.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
     about: CONSOLE_GUIDE,
+    stats: computeStats(subs),
     facts: mem.fact.map((f) => f.text),
     insights: mem.insight.map((i) => i.text),
     patterns: mem.pattern.map((p) => p.text),
-    requests: subs.slice(0, 200).map(redact),   // redacted, capped — no name/email leaves the browser
+    requests: subs.slice(0, 150).map(redact),   // redacted rows kept for specifics; stats carry the counts
   };
 }
+
+// Conversation memory: prior user/assistant turns (text only), sent so follow-ups work.
+const history = [];
 
 async function ask(question) {
   el('flux-prompts')?.remove();          // quick prompts disappear after the first use (chip click or typed message)
@@ -53,11 +89,13 @@ async function ask(question) {
   try {
     const context = await buildContext();
     const res = await fetch(WORKER_URL, { method: 'POST', headers: await authHeaders(),
-      body: JSON.stringify({ question, context }) });
+      body: JSON.stringify({ question, context, history: history.slice(-8) }) });
     thinking.remove();
     if (!res.ok) { bubble('assistant', res.status === 429 ? 'Slow down a moment and try again.' : 'Sorry — I could not answer just now.'); return; }
     const { text } = await res.json();
     bubble('assistant', text);
+    history.push({ role: 'user', content: question }, { role: 'assistant', content: text });
+    if (history.length > 20) history.splice(0, history.length - 20);   // keep memory bounded
   } catch { thinking.remove(); bubble('assistant', 'Network problem — please retry.'); }
 }
 
