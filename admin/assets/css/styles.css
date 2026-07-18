@@ -453,11 +453,15 @@ html, body {
   width: 56px; height: 56px; border-radius: 50%; border: none; padding: 0; cursor: pointer;
   background: var(--surface); box-shadow: 0 6px 20px rgba(0, 0, 0, .22);
   display: grid; place-items: center; overflow: hidden;
-  transition: transform var(--dur-fast) var(--ease-standard), box-shadow var(--dur-fast) var(--ease-standard);
+  animation: flux-pop var(--dur-slow) var(--ease-out) both;
+  transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-fast) var(--ease-standard);
 }
-.flux__launcher img { width: 100%; height: 100%; object-fit: cover; }
-.flux__launcher:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(0, 0, 0, .26); }
+.flux__launcher img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-med) var(--ease-out); }
+.flux__launcher:hover { transform: translateY(-3px) scale(1.08); box-shadow: 0 12px 28px rgba(0, 0, 0, .28); }
+.flux__launcher:hover img { transform: rotate(8deg) scale(1.08); }
+.flux__launcher:active { transform: scale(.94); }
 .flux__launcher:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2px; }
+@keyframes flux-pop { 0% { opacity: 0; transform: scale(.3) translateY(16px); } 60% { transform: scale(1.12); } 100% { opacity: 1; transform: none; } }
 
 /* Panel: right sidebar that slides out (same slide idea as the left sidebar) */
 .flux__panel {
@@ -465,7 +469,7 @@ html, body {
   background: var(--surface); border-left: 1px solid var(--line); box-shadow: -8px 0 24px rgba(0, 0, 0, .12);
   display: flex; flex-direction: column;
   transform: translateX(100%);
-  transition: transform var(--dur-slow) var(--ease-standard);
+  transition: transform var(--dur-slow) var(--ease-out);
 }
 .flux.is-open .flux__panel { transform: translateX(0); }
 
@@ -474,6 +478,8 @@ html, body {
   background: var(--navy); color: #fff;
 }
 .flux__avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; background: #fff; flex: none; }
+.flux.is-open .flux__avatar { animation: avatar-pop var(--dur-slow) var(--ease-out) both; }
+@keyframes avatar-pop { 0% { transform: scale(0) rotate(-25deg); } 55% { transform: scale(1.25) rotate(10deg); } 100% { transform: none; } }
 .flux__title { font-weight: 600; font-size: 1rem; flex: 1 1 auto; }
 .flux__close {
   border: none; background: none; color: #fff; opacity: .85; cursor: pointer;
@@ -488,9 +494,15 @@ html, body {
 .flux__chip {
   text-align: left; font: inherit; font-size: .85rem; padding: .5rem .7rem;
   background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; cursor: pointer;
-  transition: border-color var(--dur-fast) var(--ease-standard), background var(--dur-fast) var(--ease-standard);
+  opacity: 0;
+  transition: border-color var(--dur-fast) var(--ease-standard), background var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-out);
 }
-.flux__chip:hover { border-color: var(--accent); background: var(--accent-soft); }
+.flux.is-open .flux__chip { animation: flux-rise var(--dur-med) var(--ease-out) forwards; }
+.flux.is-open .flux__chip:nth-child(1) { animation-delay: .14s; }
+.flux.is-open .flux__chip:nth-child(2) { animation-delay: .22s; }
+.flux.is-open .flux__chip:nth-child(3) { animation-delay: .30s; }
+.flux__chip:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateX(3px); }
+@keyframes flux-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .flux__form { display: flex; gap: .5rem; align-items: center; padding: .8rem 1rem; border-top: 1px solid var(--line); flex: none; }
 .flux__form input {
   flex: 1 1 auto; min-width: 0;                 /* min-width:0 lets the input shrink so "Send" stays inside */
@@ -511,12 +523,33 @@ html, body {
   max-width: 85%; margin: 0; padding: .55rem .85rem; border-radius: 12px;
   line-height: 1.45; font-size: .92rem; white-space: pre-wrap; word-wrap: break-word;
 }
-.msg--user { align-self: flex-end; background: var(--navy); color: #fff; border-bottom-right-radius: 4px; }
-.msg--assistant { align-self: flex-start; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
-.msg--assistant.is-thinking { color: var(--steel); font-style: italic; }
+.msg--user {
+  align-self: flex-end; background: var(--navy); color: #fff; border-bottom-right-radius: 4px;
+  animation: msg-in-right var(--dur-med) var(--ease-out) both;
+}
+.msg--assistant {
+  align-self: flex-start; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-bottom-left-radius: 4px;
+  animation: msg-in-left var(--dur-med) var(--ease-out) both;
+}
+@keyframes msg-in-right { from { opacity: 0; transform: translate(16px, 6px) scale(.95); } to { opacity: 1; transform: none; } }
+@keyframes msg-in-left  { from { opacity: 0; transform: translate(-16px, 6px) scale(.95); } to { opacity: 1; transform: none; } }
+
+/* Thinking: three bouncing dots */
+.msg--assistant.is-thinking { display: inline-flex; align-items: center; gap: 5px; padding: .6rem .8rem; }
+.msg--assistant.is-thinking .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--steel); animation: flux-bounce 1s ease-in-out infinite; }
+.msg--assistant.is-thinking .dot:nth-child(2) { animation-delay: .16s; }
+.msg--assistant.is-thinking .dot:nth-child(3) { animation-delay: .32s; }
+@keyframes flux-bounce { 0%, 70%, 100% { transform: translateY(0); opacity: .4; } 35% { transform: translateY(-6px); opacity: 1; } }
 
 @media (max-width: 520px) {
   .flux__panel { width: 100vw; border-left: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flux__launcher, .flux__panel, .flux.is-open .flux__avatar, .flux.is-open .flux__chip,
+  .msg--user, .msg--assistant, .msg--assistant.is-thinking .dot {
+    animation: none !important; transition-duration: .01ms !important;
+  }
+  .flux__chip { opacity: 1; }
 }
 
 @media (max-width: 520px) {

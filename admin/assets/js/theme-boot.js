@@ -4,7 +4,11 @@
 // so an inline <script> would be blocked. app.js owns the toggle; this only sets the
 // initial attribute. Keep in sync with THEME_KEY in app.js ('mq_admin_theme').
 (function () {
-  // Theme toggle removed — the admin console is always the light (white) theme.
-  document.documentElement.dataset.theme = 'light';
-  try { localStorage.removeItem('mq_admin_theme'); } catch (e) { /* storage blocked */ }
+  // Default to light; use the saved theme only if the owner switched to dark.
+  try {
+    var t = localStorage.getItem('mq_admin_theme');
+    document.documentElement.dataset.theme = (t === 'dark') ? 'dark' : 'light';
+  } catch (e) {
+    document.documentElement.dataset.theme = 'light';
+  }
 })();

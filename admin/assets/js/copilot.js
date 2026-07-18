@@ -83,9 +83,10 @@ const history = [];
 async function ask(question) {
   el('flux-prompts')?.remove();          // quick prompts disappear after the first use (chip click or typed message)
   bubble('user', question);
-  const thinking = document.createElement('p');
+  const thinking = document.createElement('div');
   thinking.className = 'msg msg--assistant is-thinking';
-  thinking.textContent = '…';
+  thinking.setAttribute('aria-label', 'Flux is thinking');
+  for (let i = 0; i < 3; i++) { const d = document.createElement('span'); d.className = 'dot'; thinking.append(d); }
   log().append(thinking);
   log().scrollTop = log().scrollHeight;
   try {
