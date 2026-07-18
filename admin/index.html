@@ -207,13 +207,12 @@
 
       </div>
 
-      <!-- Flux — floating launcher + right-side assistant drawer -->
+      <!-- Flux — right-side assistant panel that slides out -->
       <div class="flux" id="flux">
         <button type="button" class="flux__launcher" id="flux-open" aria-label="Open Flux, the admin assistant" aria-expanded="false" aria-controls="flux-box">
           <img src="assets/img/flux.png" alt="" aria-hidden="true">
         </button>
-        <div class="flux__scrim" id="flux-scrim"></div>
-        <aside class="flux__drawer" id="flux-box" role="dialog" aria-label="Flux Assistant" aria-modal="true" aria-hidden="true">
+        <aside class="flux__panel" id="flux-box" aria-label="Flux Assistant" aria-hidden="true">
           <div class="flux__header">
             <img class="flux__avatar" src="assets/img/flux.png" alt="" aria-hidden="true">
             <span class="flux__title">Flux Assistant</span>
@@ -228,8 +227,8 @@
             <button type="button" class="flux__chip">Which requests have I not attended to</button>
           </div>
           <form id="assistant-form" class="flux__form">
-            <input id="assistant-input" type="text" autocomplete="off" placeholder="Ask Flux…" maxlength="500" required>
-            <button class="btn" type="submit">Ask</button>
+            <input id="assistant-input" type="text" autocomplete="off" placeholder="Message Flux…" maxlength="500" required>
+            <button class="btn" type="submit">Send</button>
           </form>
         </aside>
       </div>

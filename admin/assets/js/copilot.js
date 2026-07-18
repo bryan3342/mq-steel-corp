@@ -83,10 +83,9 @@ const history = [];
 async function ask(question) {
   el('flux-prompts')?.remove();          // quick prompts disappear after the first use (chip click or typed message)
   bubble('user', question);
-  const thinking = document.createElement('div');
+  const thinking = document.createElement('p');
   thinking.className = 'msg msg--assistant is-thinking';
-  thinking.setAttribute('aria-label', 'Flux is thinking');
-  for (let i = 0; i < 3; i++) { const d = document.createElement('span'); d.className = 'dot'; thinking.append(d); }
+  thinking.textContent = '…';
   log().append(thinking);
   log().scrollTop = log().scrollHeight;
   try {
@@ -132,7 +131,6 @@ export function initCopilot() {
 
   opener.addEventListener('click', () => (isOpen() ? closeFlux() : openFlux()));
   el('flux-close')?.addEventListener('click', closeFlux);
-  el('flux-scrim')?.addEventListener('click', closeFlux);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen()) closeFlux(); });
 
   form.addEventListener('submit', (e) => {
