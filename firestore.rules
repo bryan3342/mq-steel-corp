@@ -102,6 +102,38 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // Immutable audit trail of generated invoices/faxes. Admins may read and
+    // append metadata only (no document body / PII); records can never be
+    // edited or deleted. Whitelisted fields + server timestamp, like /submissions.
+    match /documents/{id} {
+      allow read: if isAdmin();
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly(
+             ['docType', 'invoiceNumber', 'label', 'totalCents', 'generatedBy', 'generatedAt'])
+        && request.resource.data.docType in ['invoice', 'fax']
+        && request.resource.data.invoiceNumber is string
+        && request.resource.data.invoiceNumber.size() <= 40
+        && request.resource.data.label is string
+        && request.resource.data.label.size() <= 300
+        && request.resource.data.totalCents is int
+        && request.resource.data.totalCents >= 0
+        && request.resource.data.generatedBy is string
+        && request.resource.data.generatedBy.size() <= 254
+        && request.resource.data.generatedAt is timestamp
+        && request.resource.data.generatedAt == request.time;
+      allow update, delete: if false;
+    }
+
+    // Sequential counters (e.g. counters/invoice { next: N }) for gap-free
+    // invoice numbers. Only admins may read/advance; a single int field.
+    match /counters/{id} {
+      allow read: if isAdmin();
+      allow write: if isAdmin()
+        && request.resource.data.keys().hasOnly(['next'])
+        && request.resource.data.next is int
+        && request.resource.data.next >= 1;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

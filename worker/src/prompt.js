@@ -19,6 +19,14 @@ export const SYSTEM = [
   '- "Summarize today\'s requests." → Lead with stats.today as the count, then a short bullet per matching request; if stats.today is 0, say there are none today.',
 ].join('\n');
 
+// Draft mode: writes short professional copy for a document (e.g. an invoice work
+// description). No console data, no invented specifics — text only.
+export const DRAFT_SYSTEM = [
+  'You write short, professional business copy for MQ Steel Corp, a structural steel fabrication and welding company.',
+  'Write only what is asked. Invent NO specifics that are not in the note — no prices, numbers, dates, names, or measurements.',
+  'Keep it concise and professional. Output only the requested text, with no preamble or quotes.',
+].join(' ');
+
 // Chat mode: the console data lives in the SYSTEM message (fresh each turn) so the
 // message list can carry the actual back-and-forth for multi-turn follow-ups.
 export function buildSystem(context) {
@@ -34,6 +42,12 @@ export function buildMessages({ question, context, history, mode }) {
     return [{ role: 'user', content:
       `Context (JSON):\n${ctx}\n\nFrom the redacted requests, propose up to 5 concise business ` +
       `patterns/insights as a JSON array of {"type":"pattern"|"insight","text":string}. Output ONLY the JSON.` }];
+  }
+  if (mode === 'draft') {
+    return [{ role: 'user', content:
+      'Expand the note below into a concise, professional work/line description for an invoice (1-3 sentences). ' +
+      'Do not include prices or numbers unless they appear in the note. Output ONLY the description text.\n\n' +
+      String(question || '') }];
   }
   // Prior turns (client-supplied → validated + capped), then the new question.
   const hist = Array.isArray(history)

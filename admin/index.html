@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
   <!-- Pre-paint theme bootstrap (must be a same-origin file — the admin CSP forbids inline scripts) -->
-  <script src="assets/js/theme-boot.js?v=8"></script>
-  <link rel="stylesheet" href="assets/css/styles.css?v=8">
+  <script src="assets/js/theme-boot.js?v=9"></script>
+  <link rel="stylesheet" href="assets/css/styles.css?v=9">
 </head>
 <body>
 
@@ -107,6 +107,10 @@
           <button type="button" class="navlink" data-view="requests" title="Requests" aria-label="Requests">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             <span>Requests</span>
+          </button>
+          <button type="button" class="navlink" data-view="documents" title="Documents" aria-label="Documents">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+            <span>Documents</span>
           </button>
           <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch color theme" aria-pressed="false" title="Toggle light / dark">
             <svg class="theme-toggle__sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.1" y2="19.1"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.9" y1="19.1" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.1" y2="4.9"/></svg>
@@ -210,6 +214,80 @@
           </section>
         </div>
 
+        <!-- Documents — invoice / fax generator -->
+        <section class="panel" id="documents-panel" hidden>
+          <div class="panel__bar">
+            <div>
+              <h2 class="panel__title">Documents</h2>
+              <p class="panel__sub">Fill the fields, review the preview, then download a .docx.</p>
+            </div>
+            <div class="panel__tools">
+              <div class="seg" id="doc-type" role="tablist" aria-label="Document type">
+                <button type="button" class="seg__btn is-active" data-doc="invoice">Invoice</button>
+                <button type="button" class="seg__btn" data-doc="fax">Fax</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="doc-layout">
+            <form id="doc-form" class="doc-form" autocomplete="off">
+              <!-- Invoice fields -->
+              <div class="doc-fields" data-fields="invoice">
+                <div class="doc-grid2">
+                  <label class="field"><span class="field__label">Invoice #</span><input class="input" id="doc-invoiceNumber" placeholder="auto (e.g. MQ-0001)"></label>
+                  <label class="field"><span class="field__label">Date</span><input class="input" id="doc-invoiceDate" type="date"></label>
+                </div>
+                <label class="field"><span class="field__label">Bill to — name / company</span><input class="input" id="doc-billToName" list="doc-companies" placeholder="Company or contact"></label>
+                <datalist id="doc-companies"></datalist>
+                <label class="field"><span class="field__label">Bill to — address</span><textarea class="input" id="doc-billToAddress" rows="2"></textarea></label>
+                <label class="field"><span class="field__label">Project / task</span><input class="input" id="doc-taskName"></label>
+                <div class="field">
+                  <span class="field__label doc-label-row">Description
+                    <button type="button" class="btn btn--ghost btn--small" id="doc-draft">✨ Draft with Flux</button>
+                  </span>
+                  <textarea class="input" id="doc-description" rows="3" placeholder="What was done"></textarea>
+                </div>
+                <div class="doc-items-block">
+                  <div class="doc-label-row">
+                    <span class="field__label">Line items</span>
+                    <button type="button" class="btn btn--ghost btn--small" id="doc-add-item">+ Add item</button>
+                  </div>
+                  <div id="doc-items"></div>
+                </div>
+                <label class="field doc-tax"><span class="field__label">Tax rate (%)</span><input class="input input--sm" id="doc-taxRate" inputmode="decimal" value="0"></label>
+                <label class="field"><span class="field__label">Notes / terms</span><textarea class="input" id="doc-notes" rows="2" placeholder="e.g. Payment due within 30 days."></textarea></label>
+              </div>
+
+              <!-- Fax fields -->
+              <div class="doc-fields" data-fields="fax" hidden>
+                <div class="doc-grid2">
+                  <label class="field"><span class="field__label">To</span><input class="input" id="fax-to"></label>
+                  <label class="field"><span class="field__label">From</span><input class="input" id="fax-from" value="MQ Steel Corp"></label>
+                </div>
+                <div class="doc-grid2">
+                  <label class="field"><span class="field__label">Fax number</span><input class="input" id="fax-faxNumber"></label>
+                  <label class="field"><span class="field__label">Date</span><input class="input" id="fax-faxDate" type="date"></label>
+                </div>
+                <div class="doc-grid2">
+                  <label class="field"><span class="field__label">Re</span><input class="input" id="fax-re"></label>
+                  <label class="field"><span class="field__label">Pages</span><input class="input input--sm" id="fax-pages" type="number" min="1" value="1"></label>
+                </div>
+                <label class="field"><span class="field__label">Message</span><textarea class="input" id="fax-message" rows="5"></textarea></label>
+              </div>
+
+              <div class="doc-actions">
+                <button type="submit" class="btn btn--primary" id="doc-generate">Generate .docx</button>
+                <span id="doc-status" class="doc-status" aria-live="polite"></span>
+              </div>
+            </form>
+
+            <aside class="doc-preview-wrap">
+              <div class="field__label">Preview</div>
+              <div id="doc-preview" class="doc-preview" aria-live="polite"></div>
+            </aside>
+          </div>
+        </section>
+
       </div>
 
       <!-- Flux — right-side assistant panel that slides out -->
@@ -244,7 +322,11 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
-  <script type="module" src="assets/js/app.js?v=8"></script>
-  <script type="module" src="assets/js/copilot.js?v=8"></script>
+  <!-- Vendored, pure-JS docx libs (CSP-safe: no eval/WASM). Attach window.PizZip + window.docxtemplater. -->
+  <script src="assets/vendor/pizzip.min.js?v=9"></script>
+  <script src="assets/vendor/docxtemplater.min.js?v=9"></script>
+  <script type="module" src="assets/js/app.js?v=9"></script>
+  <script type="module" src="assets/js/copilot.js?v=9"></script>
+  <script type="module" src="assets/js/documents.js?v=9"></script>
 </body>
 </html>

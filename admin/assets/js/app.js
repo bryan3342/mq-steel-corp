@@ -348,10 +348,14 @@ function renderDashboard() {
 
 function setDashView(view) {
   const requestsOnly = view === 'requests';
-  el('kpi-row').hidden = requestsOnly;
-  el('visitor-row').hidden = requestsOnly;
-  el('ranking-panel').hidden = requestsOnly;
+  const documents = view === 'documents';
+  el('kpi-row').hidden = requestsOnly || documents;
+  el('visitor-row').hidden = requestsOnly || documents;
+  el('ranking-panel').hidden = requestsOnly || documents;
+  el('dash-grid').hidden = documents;
   el('dash-grid').classList.toggle('dash-grid--full', requestsOnly);
+  const docPanel = el('documents-panel');
+  if (docPanel) docPanel.hidden = !documents;
 }
 
 // ─── Metrics ─────────────────────────────────────────────────────────────────
