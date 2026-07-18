@@ -45,6 +45,7 @@ async function buildContext() {
 }
 
 async function ask(question) {
+  el('flux-prompts')?.remove();          // quick prompts disappear after the first use (chip click or typed message)
   bubble('user', question);
   const thinking = document.createElement('p');
   thinking.className = 'msg msg--assistant is-thinking'; thinking.textContent = '…';
