@@ -638,3 +638,14 @@ html, body {
   .doc-layout { grid-template-columns: 1fr; }
   .doc-preview-wrap { position: static; }
 }
+
+/* ── Language toggle (globe in the app bar) ──────────────────── */
+.lang-toggle {
+  display: inline-flex; align-items: center; gap: .35rem;
+  background: transparent; border: 1px solid currentColor; color: inherit; opacity: .9;
+  padding: .3rem .5rem; border-radius: 8px; cursor: pointer; font: inherit; font-size: .8rem; font-weight: 600;
+  transition: background var(--dur-fast) var(--ease-standard), opacity var(--dur-fast) var(--ease-standard);
+}
+.lang-toggle:hover { background: rgba(255, 255, 255, .1); opacity: 1; }
+.lang-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lang-toggle svg { flex: none; }

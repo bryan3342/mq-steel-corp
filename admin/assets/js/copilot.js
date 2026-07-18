@@ -2,6 +2,7 @@ import { auth, appCheck } from './firebase-config.js';
 import { getToken } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app-check.js';
 import { loadMemory } from './memory.js';
 import { redact, scrubText } from './redact.js';
+import { t, getLang } from './i18n.js';
 
 const WORKER_URL = 'https://mq-steel-assistant.bryanmejiaeducation.workers.dev/chat';
 
@@ -85,21 +86,21 @@ async function ask(question) {
   bubble('user', question);
   const thinking = document.createElement('div');
   thinking.className = 'msg msg--assistant is-thinking';
-  thinking.setAttribute('aria-label', 'Flux is thinking');
+  thinking.setAttribute('aria-label', t('Flux is thinking'));
   for (let i = 0; i < 3; i++) { const d = document.createElement('span'); d.className = 'dot'; thinking.append(d); }
   log().append(thinking);
   log().scrollTop = log().scrollHeight;
   try {
     const context = await buildContext();
     const res = await fetch(WORKER_URL, { method: 'POST', headers: await authHeaders(),
-      body: JSON.stringify({ question, context, history: history.slice(-8) }) });
+      body: JSON.stringify({ question, context, history: history.slice(-8), lang: getLang() }) });
     thinking.remove();
-    if (!res.ok) { bubble('assistant', res.status === 429 ? 'Slow down a moment and try again.' : 'Sorry — I could not answer just now.'); return; }
+    if (!res.ok) { bubble('assistant', res.status === 429 ? t('Slow down a moment and try again.') : t('Sorry — I could not answer just now.')); return; }
     const { text } = await res.json();
     bubble('assistant', text);
     history.push({ role: 'user', content: question }, { role: 'assistant', content: text });
     if (history.length > 20) history.splice(0, history.length - 20);   // keep memory bounded
-  } catch { thinking.remove(); bubble('assistant', 'Network problem — please retry.'); }
+  } catch { thinking.remove(); bubble('assistant', t('Network problem — please retry.')); }
 }
 
 // ── Widget open / close (right-side drawer) ──────────────────────────────────
@@ -113,7 +114,7 @@ function openFlux() {
   el('flux-box')?.setAttribute('aria-hidden', 'false');
   if (!introShown) {
     introShown = true;
-    bubble('assistant', "Hi, I'm Flux — the MQ Steel Admin Assistant. I can summarize your requests, flag what still needs attention, and help you find your way around. Pick a prompt below or just ask.");
+    bubble('assistant', t("Hi, I'm Flux — the MQ Steel Admin Assistant. I can summarize your requests, flag what still needs attention, and help you find your way around. Pick a prompt below or just ask."));
   }
   setTimeout(() => el('assistant-input')?.focus(), 140);   // focus once the drawer has slid in
 }

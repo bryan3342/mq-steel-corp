@@ -43,9 +43,14 @@ export default {
       const body = await req.json();
       // Chat: data goes in the system message so the message list can carry the conversation.
       // Analyze: keep the legacy single-message shape (context in the user message).
-      const system = body.mode === 'analyze' ? SYSTEM
+      let system = body.mode === 'analyze' ? SYSTEM
         : body.mode === 'draft' ? DRAFT_SYSTEM
         : buildSystem(body.context);
+      // Language: when the console is in Spanish, reply in Spanish (not for the
+      // internal JSON analyze mode). The underlying data can stay English.
+      if (body.lang === 'es' && body.mode !== 'analyze') {
+        system += '\n\nAlways write your reply in Spanish (español), even though the data may be in English.';
+      }
       const text = await callModel(env, { system, messages: buildMessages(body) });
       return j({ text }, 200, ch);
     } catch (e) {

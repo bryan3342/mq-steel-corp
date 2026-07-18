@@ -1,4 +1,5 @@
 import { auth, db } from './firebase-config.js';
+import { t as tr, onLangChange } from './i18n.js';
 import {
   signInWithEmailAndPassword, sendEmailVerification, signOut, onAuthStateChanged,
   setPersistence, browserSessionPersistence,
@@ -151,7 +152,7 @@ showView('loading');
 let toastTimer = null;
 function toast(msg, isError = false) {
   const t = el('toast');
-  t.textContent = msg;
+  t.textContent = tr(msg);
   t.classList.toggle('toast--error', isError);
   t.classList.add('toast--show');
   if (toastTimer) clearTimeout(toastTimer);
@@ -465,7 +466,7 @@ function setDelta(node, delta, suffix) {
 
 function renderMetrics(m) {
   animateNumber(el('kpi-total'), m.total, { format: (n) => Math.round(n).toLocaleString() });
-  el('kpi-open').textContent = `${m.open} open`;
+  el('kpi-open').textContent = `${m.open} ${tr('open')}`;
   animateNumber(el('kpi-handled'), m.handledPct, { suffix: '%' });
   el('kpi-handled-bar').style.width = `${m.handledPct}%`;
   setDelta(el('kpi-total-badge'), m.thisMonth - m.lastMonth, 'mo');
@@ -480,7 +481,7 @@ function renderMetrics(m) {
   for (const st of STATUSES) {
     const li = document.createElement('li');
     const dot = document.createElement('span'); dot.className = 'legend-dot'; dot.style.background = cssVar(`--${st}`);
-    const lab = document.createElement('span'); lab.className = 'legend-label'; lab.textContent = STATUS_LABELS[st];
+    const lab = document.createElement('span'); lab.className = 'legend-label'; lab.textContent = tr(STATUS_LABELS[st]);
     const val = document.createElement('span'); val.className = 'legend-val'; val.textContent = m.byStatus[st];
     li.append(dot, lab, val);
     ul.append(li);
@@ -504,7 +505,7 @@ function renderVisitorMetrics(m, vm) {
   const prevSubs     = monthly ? m.lastMonth          : m.lastWeek;
 
   animateNumber(el('kpi-visits'), views, { format: (n) => Math.round(n).toLocaleString() });
-  el('kpi-visits-note').textContent = `${sessions.toLocaleString()} session${sessions === 1 ? '' : 's'}`;
+  el('kpi-visits-note').textContent = `${sessions.toLocaleString()} ${sessions === 1 ? tr('session') : tr('sessions')}`;
   setDelta(el('kpi-visits-badge'), views - prevViews, '');
 
   // Conversion can exceed 100% when sessions are under-counted; clamp the display. '—' when
@@ -512,7 +513,7 @@ function renderVisitorMetrics(m, vm) {
   const cvr = sessions > 0 ? (subs / sessions) * 100 : null;
   const prevCvr = prevSessions > 0 ? (prevSubs / prevSessions) * 100 : null;
   el('kpi-cvr').textContent = cvr === null ? '—' : `${Math.min(cvr, 100).toFixed(1)}%`;
-  el('kpi-cvr-note').textContent = `${subs} request${subs === 1 ? '' : 's'} ÷ ${sessions} session${sessions === 1 ? '' : 's'}`;
+  el('kpi-cvr-note').textContent = `${subs} ${subs === 1 ? tr('request') : tr('requests')} ÷ ${sessions} ${sessions === 1 ? tr('session') : tr('sessions')}`;
   const badge = el('kpi-cvr-badge');
   if (cvr !== null && prevCvr !== null) setDelta(badge, Math.round(cvr - prevCvr), 'pt');
   else { badge.textContent = ''; badge.classList.remove('is-up', 'is-down'); }
@@ -576,7 +577,7 @@ function ensureCharts() {
   charts.status = new Chart(el('status-chart'), {
     type: 'doughnut',
     data: {
-      labels: [STATUS_LABELS.new, STATUS_LABELS.contacted, STATUS_LABELS.closed],
+      labels: [tr(STATUS_LABELS.new), tr(STATUS_LABELS.contacted), tr(STATUS_LABELS.closed)],
       datasets: [{ data: [0, 0, 0], borderWidth: 2, borderColor: c.donutBorder,
         backgroundColor: [c.new, c.contacted, c.closed] }],
     },
@@ -701,7 +702,7 @@ function renderRequests() {
   if (!rows.length) {
     const empty = document.createElement('p');
     empty.className = 'empty';
-    empty.textContent = submissionsCache.length ? 'No requests match your filters.' : 'No requests yet.';
+    empty.textContent = tr(submissionsCache.length ? 'No requests match your filters.' : 'No requests yet.');
     list.append(empty);
     return;
   }
@@ -728,7 +729,7 @@ function renderTableHead() {
     ['Status', 'th--status'], ['Submitted', 'th--date']].forEach(([text, cls]) => {
     const th = document.createElement('span');
     th.className = `rtable__th ${cls}`;
-    th.textContent = text;
+    th.textContent = tr(text);
     head.append(th);
   });
   return head;
@@ -777,7 +778,7 @@ function renderRow(s) {
   statusCell.className = 'rcell rcell--status';
   const pill = document.createElement('span');
   pill.className = 'pill';
-  pill.textContent = STATUS_LABELS[s.status] ?? STATUS_LABELS.new;
+  pill.textContent = tr(STATUS_LABELS[s.status] ?? STATUS_LABELS.new);
   statusCell.append(pill);
 
   const dateCell = document.createElement('span');
@@ -813,19 +814,19 @@ function renderRow(s) {
 
   const statusField = document.createElement('label');
   statusField.className = 'field';
-  statusField.append(fieldLabel('Status'));
+  statusField.append(fieldLabel(tr('Status')));
   const select = document.createElement('select');
   STATUSES.forEach((st) => {
     const opt = document.createElement('option');
     opt.value = st;
-    opt.textContent = STATUS_LABELS[st];
+    opt.textContent = tr(STATUS_LABELS[st]);
     if ((s.status ?? 'new') === st) opt.selected = true;
     select.append(opt);
   });
   const applyLocal = () => {
     s.status = select.value;
     group.dataset.status = select.value;
-    pill.textContent = STATUS_LABELS[select.value];
+    pill.textContent = tr(STATUS_LABELS[select.value]);
   };
   select.addEventListener('change', async () => {
     if (DEMO) { applyLocal(); toast('Demo mode — change not saved.'); return; }
@@ -845,15 +846,15 @@ function renderRow(s) {
 
   const notesField = document.createElement('label');
   notesField.className = 'field field--grow';
-  notesField.append(fieldLabel('Internal notes'));
+  notesField.append(fieldLabel(tr('Internal notes')));
   const notes = document.createElement('textarea');
   notes.rows = 3;
   notes.value = s.adminNotes ?? '';
-  notes.placeholder = 'Add a note for your team…';
+  notes.placeholder = tr('Add a note for your team…');
   const saveNote = document.createElement('button');
   saveNote.type = 'button';
   saveNote.className = 'btn btn--small';
-  saveNote.textContent = 'Save note';
+  saveNote.textContent = tr('Save note');
   saveNote.addEventListener('click', async () => {
     if (DEMO) { s.adminNotes = notes.value; toast('Demo mode — note not saved.'); return; }
     saveNote.disabled = true;
@@ -920,6 +921,10 @@ el('dash-nav').addEventListener('click', (e) => {
 
 wireTheme();
 wireSidebar();
+
+// Re-render the dynamic dashboard (table, status labels, charts, KPI notes) when
+// the language changes; static chrome is handled by i18n's TreeWalker.
+onLangChange(() => { if (!el('app-view').hidden && latestMetrics) renderDashboard(); });
 
 if (DEMO) {
   startDemo();

@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
   <!-- Pre-paint theme bootstrap (must be a same-origin file — the admin CSP forbids inline scripts) -->
-  <script src="assets/js/theme-boot.js?v=9"></script>
-  <link rel="stylesheet" href="assets/css/styles.css?v=9">
+  <script src="assets/js/theme-boot.js?v=10"></script>
+  <link rel="stylesheet" href="assets/css/styles.css?v=10">
 </head>
 <body>
 
@@ -20,6 +20,10 @@
     <div class="appbar__brand"><span>MQ</span> Steel Corp · Admin</div>
     <div class="appbar__user">
       <span class="appbar__console">Admin Console</span>
+      <button type="button" class="lang-toggle" id="lang-toggle" data-i18n-skip aria-label="Change language to Spanish" aria-pressed="false">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></svg>
+        <span class="lang-toggle__code">EN</span>
+      </button>
       <button type="button" class="btn btn--ghost btn--small" data-signout>Sign out</button>
     </div>
   </header>
@@ -204,7 +208,7 @@
                 <span class="panel__count"><strong id="requests-count">0</strong></span>
               </div>
             </div>
-            <div id="requests-list" class="rtable"></div>
+            <div id="requests-list" class="rtable" data-i18n-skip></div>
           </section>
 
           <section class="panel" id="ranking-panel">
@@ -252,7 +256,7 @@
                     <span class="field__label">Line items</span>
                     <button type="button" class="btn btn--ghost btn--small" id="doc-add-item">+ Add item</button>
                   </div>
-                  <div id="doc-items"></div>
+                  <div id="doc-items" data-i18n-skip></div>
                 </div>
                 <label class="field doc-tax"><span class="field__label">Tax rate (%)</span><input class="input input--sm" id="doc-taxRate" inputmode="decimal" value="0"></label>
                 <label class="field"><span class="field__label">Notes / terms</span><textarea class="input" id="doc-notes" rows="2" placeholder="e.g. Payment due within 30 days."></textarea></label>
@@ -283,7 +287,7 @@
 
             <aside class="doc-preview-wrap">
               <div class="field__label">Preview</div>
-              <div id="doc-preview" class="doc-preview" aria-live="polite"></div>
+              <div id="doc-preview" class="doc-preview" aria-live="polite" data-i18n-skip></div>
             </aside>
           </div>
         </section>
@@ -303,7 +307,7 @@
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
             </button>
           </div>
-          <div id="assistant-log" class="flux__log" aria-live="polite"></div>
+          <div id="assistant-log" class="flux__log" aria-live="polite" data-i18n-skip></div>
           <div class="flux__prompts" id="flux-prompts">
             <button type="button" class="flux__chip">I need help with navigation</button>
             <button type="button" class="flux__chip">Summarize all requests from today</button>
@@ -323,10 +327,10 @@
 
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
   <!-- Vendored, pure-JS docx libs (CSP-safe: no eval/WASM). Attach window.PizZip + window.docxtemplater. -->
-  <script src="assets/vendor/pizzip.min.js?v=9"></script>
-  <script src="assets/vendor/docxtemplater.min.js?v=9"></script>
-  <script type="module" src="assets/js/app.js?v=9"></script>
-  <script type="module" src="assets/js/copilot.js?v=9"></script>
-  <script type="module" src="assets/js/documents.js?v=9"></script>
+  <script src="assets/vendor/pizzip.min.js?v=10"></script>
+  <script src="assets/vendor/docxtemplater.min.js?v=10"></script>
+  <script type="module" src="assets/js/app.js?v=10"></script>
+  <script type="module" src="assets/js/copilot.js?v=10"></script>
+  <script type="module" src="assets/js/documents.js?v=10"></script>
 </body>
 </html>

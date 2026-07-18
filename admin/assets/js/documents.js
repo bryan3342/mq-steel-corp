@@ -8,6 +8,7 @@ import { doc, collection, runTransaction, addDoc, serverTimestamp }
   from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
 import { getToken } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app-check.js';
 import { parseAmountToCents, parseRatePercent, computeInvoice, formatUSD } from './invoice-calc.js';
+import { t, getLang, onLangChange } from './i18n.js';
 
 const el = (id) => document.getElementById(id);
 const WORKER_URL = 'https://mq-steel-assistant.bryanmejiaeducation.workers.dev/chat';
@@ -20,7 +21,7 @@ let docType = 'invoice';
 function status(msg, kind = '') {
   const s = el('doc-status');
   if (!s) return;
-  s.textContent = msg;
+  s.textContent = t(msg);   // literal-key messages auto-translate; pre-built strings pass through
   s.className = 'doc-status' + (kind ? ` is-${kind}` : '');
 }
 
@@ -43,13 +44,13 @@ function addItemRow(description = '', amount = '') {
   const row = document.createElement('div');
   row.className = 'doc-item';
   const desc = document.createElement('input');
-  desc.className = 'input'; desc.type = 'text'; desc.placeholder = 'Item description';
+  desc.className = 'input'; desc.type = 'text'; desc.placeholder = t('Item description');
   desc.value = description; desc.dataset.role = 'item-desc';
   const amt = document.createElement('input');
   amt.className = 'input'; amt.type = 'text'; amt.inputMode = 'decimal'; amt.placeholder = '0.00';
   amt.value = amount; amt.dataset.role = 'item-amount';
   const rm = document.createElement('button');
-  rm.type = 'button'; rm.className = 'doc-item__remove'; rm.setAttribute('aria-label', 'Remove item'); rm.textContent = '×';
+  rm.type = 'button'; rm.className = 'doc-item__remove'; rm.setAttribute('aria-label', t('Remove item')); rm.textContent = '×';
   rm.addEventListener('click', () => { row.remove(); renderPreview(); });
   row.append(desc, amt, rm);
   wrap.append(row);
@@ -111,12 +112,12 @@ function renderPreview() {
 }
 
 function renderInvoicePreview(box, inv) {
-  box.append(line('doc-preview__title', 'Invoice'));
-  box.append(line('', `Invoice #: ${inv.invoiceNumber || '(auto)'}`));
+  box.append(line('doc-preview__title', t('Invoice')));
+  box.append(line('', `${t('Invoice #')}: ${inv.invoiceNumber || t('(auto)')}`));
   if (inv.invoiceDate) box.append(line('doc-preview__muted', inv.invoiceDate));
   if (inv.billToName || inv.billToAddress) {
     const sec = document.createElement('div'); sec.className = 'doc-preview__section';
-    sec.append(line('doc-preview__strong', 'Bill to'));
+    sec.append(line('doc-preview__strong', t('Bill to')));
     if (inv.billToName) sec.append(line('', inv.billToName));
     if (inv.billToAddress) sec.append(line('doc-preview__muted', inv.billToAddress));
     box.append(sec);
@@ -127,8 +128,8 @@ function renderInvoicePreview(box, inv) {
   const table = document.createElement('table');
   const thead = document.createElement('thead');
   const htr = document.createElement('tr');
-  const th1 = document.createElement('th'); th1.textContent = 'Description';
-  const th2 = document.createElement('th'); th2.className = 'amt'; th2.textContent = 'Amount';
+  const th1 = document.createElement('th'); th1.textContent = t('Description');
+  const th2 = document.createElement('th'); th2.className = 'amt'; th2.textContent = t('Amount');
   htr.append(th1, th2); thead.append(htr); table.append(thead);
   const tbody = document.createElement('tbody');
   for (const it of inv.items) {
@@ -140,10 +141,10 @@ function renderInvoicePreview(box, inv) {
   table.append(tbody); box.append(table);
 
   const totals = document.createElement('div'); totals.className = 'doc-preview__totals';
-  kv(totals, 'Subtotal', formatUSD(inv.subtotalCents));
-  kv(totals, `Tax (${inv.taxRatePercent || 0}%)`, formatUSD(inv.taxCents));
+  kv(totals, t('Subtotal'), formatUSD(inv.subtotalCents));
+  kv(totals, `${t('Tax')} (${inv.taxRatePercent || 0}%)`, formatUSD(inv.taxCents));
   const totalRow = document.createElement('div'); totalRow.className = 'doc-preview__row doc-preview__strong';
-  const tl = document.createElement('span'); tl.textContent = 'Total';
+  const tl = document.createElement('span'); tl.textContent = t('Total');
   const tv = document.createElement('span'); tv.textContent = formatUSD(inv.totalCents);
   totalRow.append(tl, tv); totals.append(totalRow); box.append(totals);
 
@@ -154,13 +155,13 @@ function renderInvoicePreview(box, inv) {
 }
 
 function renderFaxPreview(box, fax) {
-  box.append(line('doc-preview__title', 'Fax'));
-  kv(box, 'To', fax.to || '—');
-  kv(box, 'From', fax.from || '—');
-  kv(box, 'Fax', fax.faxNumber || '—');
-  if (fax.faxDate) kv(box, 'Date', fax.faxDate);
-  kv(box, 'Re', fax.re || '—');
-  kv(box, 'Pages', fax.pages || '—');
+  box.append(line('doc-preview__title', t('Fax')));
+  kv(box, t('To'), fax.to || '—');
+  kv(box, t('From'), fax.from || '—');
+  kv(box, t('Fax'), fax.faxNumber || '—');
+  if (fax.faxDate) kv(box, t('Date'), fax.faxDate);
+  kv(box, t('Re'), fax.re || '—');
+  kv(box, t('Pages'), fax.pages || '—');
   const msg = document.createElement('div'); msg.className = 'doc-preview__section'; msg.textContent = fax.message || '';
   box.append(msg);
 }
@@ -191,7 +192,7 @@ const faxTemplateData = (fax) => ({
 async function fillTemplate(path, data) {
   if (!window.PizZip || !window.docxtemplater) throw new Error('Document libraries did not load.');
   const res = await fetch(path);
-  if (!res.ok) throw new Error(`Could not load template (${res.status}).`);
+  if (!res.ok) throw new Error(`${t('Could not load template')} (${res.status}).`);
   const zip = new window.PizZip(await res.arrayBuffer());
   const tpl = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
   tpl.render(data);   // throws on malformed {tags}
@@ -247,7 +248,7 @@ async function generate() {
       const blob = await fillTemplate('assets/templates/invoice.docx', invoiceTemplateData(inv, number));
       downloadBlob(blob, `Invoice-${number}.docx`);
       await logDocument({ docType: 'invoice', invoiceNumber: number, label: inv.taskName, totalCents: inv.totalCents });
-      status(`Generated ${number}.`, 'success');
+      status(`${t('Generated')} ${number}.`, 'success');
       renderPreview();
     } else {
       const fax = readFax();
@@ -280,12 +281,12 @@ async function draftDescription() {
   const note = el('doc-description').value.trim();
   if (!task && !note) { status('Add a task name or a short note for Flux to expand.', 'error'); return; }
   const original = btn.textContent;
-  btn.disabled = true; btn.textContent = 'Drafting…';
+  btn.disabled = true; btn.textContent = t('Drafting…');
   try {
     const res = await fetch(WORKER_URL, {
       method: 'POST',
       headers: await authHeaders(),
-      body: JSON.stringify({ mode: 'draft', question: `Task: ${task}\nNotes: ${note}` }),
+      body: JSON.stringify({ mode: 'draft', question: `Task: ${task}\nNotes: ${note}`, lang: getLang() }),
     });
     if (!res.ok) throw new Error('draft request failed');
     const { text } = await res.json();
@@ -334,6 +335,12 @@ export function initDocuments() {
   el('doc-draft')?.addEventListener('click', draftDescription);
   form.addEventListener('input', renderPreview);
   form.addEventListener('submit', (e) => { e.preventDefault(); generate(); });
+
+  onLangChange(() => {
+    renderPreview();
+    document.querySelectorAll('#doc-items [data-role=item-desc]').forEach((i) => { i.placeholder = t('Item description'); });
+    document.querySelectorAll('#doc-items .doc-item__remove').forEach((b) => b.setAttribute('aria-label', t('Remove item')));
+  });
 }
 
 initDocuments();
